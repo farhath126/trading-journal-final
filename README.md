@@ -75,7 +75,7 @@ All trades are stored in your browser's local storage. This means:
 
 ## License
 
-MIT
+Farhath B
 
 
 
