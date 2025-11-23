@@ -1,6 +1,19 @@
 import { useState, useEffect } from 'react'
-import { Save, X, Image as ImageIcon, Link as LinkIcon, Upload, Tag, TrendingUp } from 'lucide-react'
+import { Save, X, Image as ImageIcon, Link as LinkIcon, Upload, Tag, TrendingUp, AlertTriangle } from 'lucide-react'
 import { getStrategies } from '../utils/storage'
+
+const COMMON_MISTAKES = [
+  'FOMO',
+  'Revenge Trading',
+  'Overleveraging',
+  'Early Exit',
+  'Chasing Price',
+  'Ignoring Stop Loss',
+  'No Plan',
+  'Emotional Entry',
+  'Boredom Trading',
+  'Counter Trend',
+]
 
 function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
   const [strategies, setStrategies] = useState([])
@@ -16,6 +29,7 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
     exitDate: '',
     strategy: '',
     tags: '',
+    mistakes: [],
     conviction: '',
     notes: '',
   })
@@ -38,6 +52,7 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
         exitDate: '',
         strategy: plannedTrade.strategy || '',
         tags: plannedTrade.tags ? plannedTrade.tags.join(', ') : '',
+        mistakes: [],
         conviction: plannedTrade.conviction || '',
         notes: plannedTrade.notes || '',
       })
@@ -54,6 +69,7 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
         exitDate: editTrade.exitDate || '',
         strategy: editTrade.strategy || '',
         tags: editTrade.tags ? editTrade.tags.join(', ') : '',
+        mistakes: editTrade.mistakes || [],
         conviction: editTrade.conviction || '',
         notes: editTrade.notes || '',
       })
@@ -71,6 +87,7 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
         exitDate: '',
         strategy: '',
         tags: '',
+        mistakes: [],
         conviction: '',
         notes: '',
       })
@@ -85,6 +102,15 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
       ...prev,
       [name]: value,
     }))
+  }
+
+  const handleMistakeToggle = (mistake) => {
+    setFormData(prev => {
+      const newMistakes = prev.mistakes.includes(mistake)
+        ? prev.mistakes.filter(m => m !== mistake)
+        : [...prev.mistakes, mistake]
+      return { ...prev, mistakes: newMistakes }
+    })
   }
 
   const handleScreenshotUpload = (e) => {
@@ -130,12 +156,12 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    
+
     // Calculate P/L
     const entry = parseFloat(formData.entryPrice)
     const exit = parseFloat(formData.exitPrice)
     const qty = parseFloat(formData.quantity)
-    
+
     let pnl = 0
     if (formData.type === 'long') {
       pnl = (exit - entry) * qty
@@ -145,7 +171,7 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
 
     const filteredUrls = urls.filter(url => url.trim() !== '')
     const tagsArray = formData.tags.split(',').map(t => t.trim()).filter(t => t)
-    
+
     const trade = {
       ...formData,
       entryPrice: entry,
@@ -165,7 +191,7 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
     } else {
       onAddTrade(trade, false)
     }
-    
+
     // Reset form
     setFormData({
       symbol: '',
@@ -177,6 +203,7 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
       exitDate: '',
       strategy: '',
       tags: '',
+      mistakes: [],
       conviction: '',
       notes: '',
     })
@@ -384,6 +411,29 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
               <option value="A">A (High)</option>
               <option value="B">B (Medium)</option>
             </select>
+          </div>
+        </div>
+
+        {/* Mistakes */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-orange-500" />
+            Mistakes
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {COMMON_MISTAKES.map(mistake => (
+              <button
+                key={mistake}
+                type="button"
+                onClick={() => handleMistakeToggle(mistake)}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${formData.mistakes.includes(mistake)
+                    ? 'bg-red-100 text-red-700 border-red-200'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                  }`}
+              >
+                {mistake}
+              </button>
+            ))}
           </div>
         </div>
 

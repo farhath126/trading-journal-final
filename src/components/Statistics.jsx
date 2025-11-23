@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, Target, DollarSign, Calendar, Clock, BarChart2 } from 'lucide-react'
+import { TrendingUp, TrendingDown, Target, DollarSign, Calendar, Clock, BarChart2, AlertTriangle } from 'lucide-react'
 import { getCapitalAdjustments } from '../utils/storage'
 
 function Statistics({ trades, settings }) {
@@ -42,7 +42,7 @@ function Statistics({ trades, settings }) {
   // Additional metrics
   const totalWins = winningTrades.reduce((sum, trade) => sum + (trade.pnl || 0), 0)
   const totalLosses = Math.abs(losingTrades.reduce((sum, trade) => sum + (trade.pnl || 0), 0))
-  
+
   // Calculate average trade duration
   const durations = trades
     .filter(t => t.entryDate && t.exitDate)
@@ -66,7 +66,7 @@ function Statistics({ trades, settings }) {
   let peak = adjustedStartingCapital
   let maxDrawdown = 0
   let maxDrawdownPercent = 0
-  
+
   sortedTrades.forEach(trade => {
     const currentCapital = peak + (trade.pnl || 0)
     if (currentCapital > peak) {
@@ -83,7 +83,7 @@ function Statistics({ trades, settings }) {
 
   // Calculate ROI
   const startingCapital = adjustedStartingCapital
-  const roi = startingCapital > 0 
+  const roi = startingCapital > 0
     ? ((totalPnL / startingCapital) * 100).toFixed(2)
     : '0.00'
 
@@ -94,6 +94,23 @@ function Statistics({ trades, settings }) {
 
   // Calculate risk-reward ratio
   const riskRewardRatio = avgLoss > 0 ? (avgWin / avgLoss).toFixed(2) : avgWin > 0 ? '∞' : '0.00'
+
+  // Calculate Mistake Analysis
+  const mistakeStats = {}
+  trades.forEach(trade => {
+    if (trade.mistakes && trade.mistakes.length > 0) {
+      trade.mistakes.forEach(mistake => {
+        if (!mistakeStats[mistake]) {
+          mistakeStats[mistake] = { count: 0, pnl: 0 }
+        }
+        mistakeStats[mistake].count++
+        mistakeStats[mistake].pnl += trade.pnl || 0
+      })
+    }
+  })
+
+  const sortedMistakes = Object.entries(mistakeStats)
+    .sort((a, b) => a[1].pnl - b[1].pnl) // Sort by P/L ascending (worst first)
 
   const stats = [
     {
@@ -150,7 +167,7 @@ function Statistics({ trades, settings }) {
   return (
     <div>
       <h2 className="text-2xl font-semibold text-slate-800 mb-6">Statistics</h2>
-      
+
       {/* Main Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => {
@@ -248,6 +265,42 @@ function Statistics({ trades, settings }) {
           </div>
         </div>
       </div>
+
+      {/* Mistake Analysis */}
+      {sortedMistakes.length > 0 && (
+        <div className="bg-slate-50 rounded-lg p-6 border border-slate-200 mb-6">
+          <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-orange-500" />
+            Mistake Analysis
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-200">
+                  <th className="text-left py-2 px-4 font-semibold text-slate-700">Mistake</th>
+                  <th className="text-right py-2 px-4 font-semibold text-slate-700">Frequency</th>
+                  <th className="text-right py-2 px-4 font-semibold text-slate-700">Total Cost</th>
+                  <th className="text-right py-2 px-4 font-semibold text-slate-700">Avg Cost / Trade</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedMistakes.map(([mistake, stats]) => (
+                  <tr key={mistake} className="border-b border-slate-100">
+                    <td className="py-2 px-4 font-medium text-slate-800">{mistake}</td>
+                    <td className="py-2 px-4 text-right text-slate-600">{stats.count}</td>
+                    <td className="py-2 px-4 text-right font-medium text-red-600">
+                      {formatCurrency(stats.pnl)}
+                    </td>
+                    <td className="py-2 px-4 text-right text-slate-600">
+                      {formatCurrency(stats.pnl / stats.count)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

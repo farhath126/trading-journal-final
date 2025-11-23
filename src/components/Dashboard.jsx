@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { TrendingUp, TrendingDown, DollarSign, Activity } from 'lucide-react'
 import { getCapitalAdjustments } from '../utils/storage'
+import CalendarView from './CalendarView'
 
 function Dashboard({ trades, settings }) {
   const [hoveredPoint, setHoveredPoint] = useState(null)
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 })
-  
+  const [viewMode, setViewMode] = useState('overview') // 'overview' or 'calendar'
+
   // Get capital adjustments
   const capitalAdjustments = getCapitalAdjustments()
   const netAdjustments = capitalAdjustments.reduce((sum, adj) => {
@@ -35,14 +37,14 @@ function Dashboard({ trades, settings }) {
   const totalPnL = trades.reduce((sum, trade) => sum + (trade.pnl || 0), 0)
   const currentCapital = settings.startingCapital + netAdjustments + totalPnL
   const adjustedStartingCapital = settings.startingCapital + netAdjustments
-  const roi = adjustedStartingCapital > 0 
+  const roi = adjustedStartingCapital > 0
     ? ((totalPnL / adjustedStartingCapital) * 100).toFixed(2)
     : '0.00'
-  
+
   const winningTrades = trades.filter((trade) => (trade.pnl || 0) > 0)
   const losingTrades = trades.filter((trade) => (trade.pnl || 0) < 0)
   const winRate = trades.length > 0 ? (winningTrades.length / trades.length) * 100 : 0
-  
+
   const totalWins = winningTrades.reduce((sum, trade) => sum + (trade.pnl || 0), 0)
   const totalLosses = Math.abs(losingTrades.reduce((sum, trade) => sum + (trade.pnl || 0), 0))
   const profitFactor = totalLosses > 0 ? (totalWins / totalLosses).toFixed(2) : totalWins > 0 ? '∞' : '0.00'
@@ -51,7 +53,7 @@ function Dashboard({ trades, settings }) {
   const equityCurve = []
   let runningCapital = settings.startingCapital + netAdjustments
   equityCurve.push({ date: 'Start', capital: runningCapital })
-  
+
   const sortedTrades = [...trades].sort((a, b) => {
     const dateA = new Date(a.exitDate || a.entryDate || a.createdAt)
     const dateB = new Date(b.exitDate || b.entryDate || b.createdAt)
@@ -72,7 +74,7 @@ function Dashboard({ trades, settings }) {
   let currentCapitalForDrawdown = adjustedStartingCapital
   let maxDrawdown = 0
   let maxDrawdownPercent = 0
-  
+
   sortedTrades.forEach(trade => {
     currentCapitalForDrawdown += trade.pnl || 0
     if (currentCapitalForDrawdown > peak) {
@@ -143,7 +145,29 @@ function Dashboard({ trades, settings }) {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-slate-800 mb-6">Dashboard</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-semibold text-slate-800">Dashboard</h2>
+        <div className="flex bg-slate-100 p-1 rounded-lg">
+          <button
+            onClick={() => setViewMode('overview')}
+            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${viewMode === 'overview'
+                ? 'bg-white text-slate-800 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700'
+              }`}
+          >
+            Overview
+          </button>
+          <button
+            onClick={() => setViewMode('calendar')}
+            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${viewMode === 'calendar'
+                ? 'bg-white text-slate-800 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700'
+              }`}
+          >
+            Calendar
+          </button>
+        </div>
+      </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -163,9 +187,8 @@ function Dashboard({ trades, settings }) {
           </p>
         </div>
 
-        <div className={`bg-gradient-to-br rounded-lg p-6 border ${
-          totalPnL >= 0 ? 'from-green-50 to-green-100 border-green-200' : 'from-red-50 to-red-100 border-red-200'
-        }`}>
+        <div className={`bg-gradient-to-br rounded-lg p-6 border ${totalPnL >= 0 ? 'from-green-50 to-green-100 border-green-200' : 'from-red-50 to-red-100 border-red-200'
+          }`}>
           <div className="flex items-center justify-between mb-2">
             {totalPnL >= 0 ? (
               <TrendingUp className="w-6 h-6 text-green-600" />
@@ -205,312 +228,316 @@ function Dashboard({ trades, settings }) {
         </div>
       </div>
 
-      {/* Equity Curve Visualization */}
-      {equityCurve.length > 0 && (
-        <div className="bg-slate-50 rounded-lg p-6 border border-slate-200 mb-6">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Equity Curve</h3>
-          <div className="relative">
-            <svg 
-              viewBox="0 0 800 300" 
-              className="w-full h-64"
-              preserveAspectRatio="none"
-            >
-              {(() => {
-                const maxCapital = Math.max(...equityCurve.map(p => p.capital))
-                const minCapital = Math.min(...equityCurve.map(p => p.capital))
-                const range = maxCapital - minCapital || 1
-                const leftPadding = 80 // Increased for Y-axis labels
-                const rightPadding = 20
-                const topPadding = 20
-                const bottomPadding = 40
-                const width = 800 - leftPadding - rightPadding
-                const height = 300 - topPadding - bottomPadding
-                const pointCount = equityCurve.length
-                
-                // Generate points for the line
-                const points = equityCurve.map((point, index) => {
-                  const x = leftPadding + (index / (pointCount - 1 || 1)) * width
-                  // Invert Y: higher values at top (smaller Y coordinate in SVG)
-                  const normalizedValue = (point.capital - minCapital) / range
-                  const y = topPadding + height - (normalizedValue * height)
-                  return { x, y, capital: point.capital, date: point.date }
-                })
-                
-                // Create path for the line
-                const pathData = points.map((point, index) => {
-                  return `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
-                }).join(' ')
-                
-                // Create area fill path
-                const areaPath = points.length > 0 
-                  ? `${pathData} L ${points[points.length - 1].x} ${topPadding + height} L ${points[0].x} ${topPadding + height} Z`
-                  : ''
-                
-                return (
-                  <>
-                    {/* Grid lines */}
-                    {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
-                      // ratio 0 = min (bottom), ratio 1 = max (top)
-                      const y = topPadding + height - (ratio * height)
-                      // value increases from min to max as ratio goes from 0 to 1
-                      const value = minCapital + (range * ratio)
-                      return (
-                        <g key={ratio}>
-                          <line
-                            x1={leftPadding}
-                            y1={y}
-                            x2={800 - rightPadding}
-                            y2={y}
-                            stroke="#e2e8f0"
-                            strokeWidth="1"
-                            strokeDasharray="4,4"
-                          />
-                          <text
-                            x={leftPadding - 10}
-                            y={y + 4}
-                            textAnchor="end"
-                            fontSize="10"
-                            fill="#64748b"
-                            className="font-medium"
-                          >
-                            {formatCurrency(value)}
-                          </text>
-                        </g>
-                      )
-                    })}
-                    
-                    {/* Area fill */}
-                    <path
-                      d={areaPath}
-                      fill={currentCapital >= adjustedStartingCapital ? "url(#gradientGreen)" : "url(#gradientRed)"}
-                      opacity="0.2"
-                    />
-                    
-                    {/* Line */}
-                    <path
-                      d={pathData}
-                      fill="none"
-                      stroke={currentCapital >= adjustedStartingCapital ? "#10b981" : "#ef4444"}
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    
-                    {/* Starting capital reference line */}
-                    <line
-                      x1={leftPadding}
-                      y1={topPadding + height - ((adjustedStartingCapital - minCapital) / range) * height}
-                      x2={800 - rightPadding}
-                      y2={topPadding + height - ((adjustedStartingCapital - minCapital) / range) * height}
-                      stroke="#94a3b8"
-                      strokeWidth="1"
-                      strokeDasharray="2,2"
-                    />
-                    
-                    {/* Points */}
-                    {points.map((point, index) => (
-                      <g key={index}>
-                        <circle
-                          cx={point.x}
-                          cy={point.y}
-                          r={hoveredPoint === index ? "6" : "4"}
-                          fill={point.capital >= adjustedStartingCapital ? "#10b981" : "#ef4444"}
-                          stroke="white"
-                          strokeWidth={hoveredPoint === index ? "3" : "2"}
-                          className="transition-all cursor-pointer"
-                          onMouseEnter={() => {
-                            setHoveredPoint(index)
-                            setTooltipPosition({
-                              x: point.x,
-                              y: point.y
-                            })
-                          }}
-                          onMouseLeave={() => setHoveredPoint(null)}
+      {viewMode === 'calendar' ? (
+        <CalendarView trades={trades} settings={settings} />
+      ) : (
+        <>
+          {/* Equity Curve Visualization */}
+          {equityCurve.length > 0 && (
+            <div className="bg-slate-50 rounded-lg p-6 border border-slate-200 mb-6">
+              <h3 className="text-lg font-semibold text-slate-800 mb-4">Equity Curve</h3>
+              <div className="relative">
+                <svg
+                  viewBox="0 0 800 300"
+                  className="w-full h-64"
+                  preserveAspectRatio="none"
+                >
+                  {(() => {
+                    const maxCapital = Math.max(...equityCurve.map(p => p.capital))
+                    const minCapital = Math.min(...equityCurve.map(p => p.capital))
+                    const range = maxCapital - minCapital || 1
+                    const leftPadding = 80 // Increased for Y-axis labels
+                    const rightPadding = 20
+                    const topPadding = 20
+                    const bottomPadding = 40
+                    const width = 800 - leftPadding - rightPadding
+                    const height = 300 - topPadding - bottomPadding
+                    const pointCount = equityCurve.length
+
+                    // Generate points for the line
+                    const points = equityCurve.map((point, index) => {
+                      const x = leftPadding + (index / (pointCount - 1 || 1)) * width
+                      // Invert Y: higher values at top (smaller Y coordinate in SVG)
+                      const normalizedValue = (point.capital - minCapital) / range
+                      const y = topPadding + height - (normalizedValue * height)
+                      return { x, y, capital: point.capital, date: point.date }
+                    })
+
+                    // Create path for the line
+                    const pathData = points.map((point, index) => {
+                      return `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
+                    }).join(' ')
+
+                    // Create area fill path
+                    const areaPath = points.length > 0
+                      ? `${pathData} L ${points[points.length - 1].x} ${topPadding + height} L ${points[0].x} ${topPadding + height} Z`
+                      : ''
+
+                    return (
+                      <>
+                        {/* Grid lines */}
+                        {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
+                          // ratio 0 = min (bottom), ratio 1 = max (top)
+                          const y = topPadding + height - (ratio * height)
+                          // value increases from min to max as ratio goes from 0 to 1
+                          const value = minCapital + (range * ratio)
+                          return (
+                            <g key={ratio}>
+                              <line
+                                x1={leftPadding}
+                                y1={y}
+                                x2={800 - rightPadding}
+                                y2={y}
+                                stroke="#e2e8f0"
+                                strokeWidth="1"
+                                strokeDasharray="4,4"
+                              />
+                              <text
+                                x={leftPadding - 10}
+                                y={y + 4}
+                                textAnchor="end"
+                                fontSize="10"
+                                fill="#64748b"
+                                className="font-medium"
+                              >
+                                {formatCurrency(value)}
+                              </text>
+                            </g>
+                          )
+                        })}
+
+                        {/* Area fill */}
+                        <path
+                          d={areaPath}
+                          fill={currentCapital >= adjustedStartingCapital ? "url(#gradientGreen)" : "url(#gradientRed)"}
+                          opacity="0.2"
                         />
-                      </g>
-                    ))}
-                    
-                    {/* Tooltip */}
-                    {hoveredPoint !== null && points[hoveredPoint] && (
-                      <g>
-                        {/* Tooltip background */}
-                        <rect
-                          x={tooltipPosition.x - 70}
-                          y={tooltipPosition.y - 55}
-                          width="140"
-                          height="45"
-                          rx="8"
-                          fill="#1e293b"
-                          opacity="0.95"
-                          stroke="#334155"
+
+                        {/* Line */}
+                        <path
+                          d={pathData}
+                          fill="none"
+                          stroke={currentCapital >= adjustedStartingCapital ? "#10b981" : "#ef4444"}
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+
+                        {/* Starting capital reference line */}
+                        <line
+                          x1={leftPadding}
+                          y1={topPadding + height - ((adjustedStartingCapital - minCapital) / range) * height}
+                          x2={800 - rightPadding}
+                          y2={topPadding + height - ((adjustedStartingCapital - minCapital) / range) * height}
+                          stroke="#94a3b8"
                           strokeWidth="1"
+                          strokeDasharray="2,2"
                         />
-                        {/* Tooltip content */}
-                        <text
-                          x={tooltipPosition.x}
-                          y={tooltipPosition.y - 32}
-                          textAnchor="middle"
-                          fontSize="12"
-                          fill="#ffffff"
-                          fontWeight="600"
-                        >
-                          {equityCurve[hoveredPoint]?.date}
-                        </text>
-                        <text
-                          x={tooltipPosition.x}
-                          y={tooltipPosition.y - 18}
-                          textAnchor="middle"
-                          fontSize="11"
-                          fill="#60a5fa"
-                          fontWeight="500"
-                        >
-                          {formatCurrency(points[hoveredPoint].capital)}
-                        </text>
-                        {/* Tooltip arrow pointing down */}
-                        <polygon
-                          points={`${tooltipPosition.x - 8},${tooltipPosition.y - 10} ${tooltipPosition.x + 8},${tooltipPosition.y - 10} ${tooltipPosition.x},${tooltipPosition.y}`}
-                          fill="#1e293b"
-                          opacity="0.95"
-                        />
-                      </g>
-                    )}
-                    
-                    {/* X-axis labels */}
-                    {points.filter((_, index) => index === 0 || index === points.length - 1 || index % Math.ceil(points.length / 4) === 0).map((point, index) => {
-                      const originalIndex = points.indexOf(point)
-                      return (
-                        <text
-                          key={index}
-                          x={point.x}
-                          y={topPadding + height + 20}
-                          textAnchor="middle"
-                          fontSize="10"
-                          fill="#64748b"
-                        >
-                          {equityCurve[originalIndex]?.date}
-                        </text>
-                      )
-                    })}
-                    
-                    {/* Gradients */}
-                    <defs>
-                      <linearGradient id="gradientGreen" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#10b981" stopOpacity="0.3" />
-                        <stop offset="100%" stopColor="#10b981" stopOpacity="0.1" />
-                      </linearGradient>
-                      <linearGradient id="gradientRed" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#ef4444" stopOpacity="0.3" />
-                        <stop offset="100%" stopColor="#ef4444" stopOpacity="0.1" />
-                      </linearGradient>
-                    </defs>
-                  </>
-                )
-              })()}
-            </svg>
-            
-            {/* Legend */}
-            <div className="mt-4 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  <span className="text-slate-600">Above Starting Capital</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <span className="text-slate-600">Below Starting Capital</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 text-slate-600">
-                <div>
-                  <span className="font-medium">Start: </span>
-                  <span>{formatCurrency(equityCurve[0]?.capital || adjustedStartingCapital)}</span>
-                </div>
-                <div>
-                  <span className="font-medium">Current: </span>
-                  <span>{formatCurrency(equityCurve[equityCurve.length - 1]?.capital || currentCapital)}</span>
+
+                        {/* Points */}
+                        {points.map((point, index) => (
+                          <g key={index}>
+                            <circle
+                              cx={point.x}
+                              cy={point.y}
+                              r={hoveredPoint === index ? "6" : "4"}
+                              fill={point.capital >= adjustedStartingCapital ? "#10b981" : "#ef4444"}
+                              stroke="white"
+                              strokeWidth={hoveredPoint === index ? "3" : "2"}
+                              className="transition-all cursor-pointer"
+                              onMouseEnter={() => {
+                                setHoveredPoint(index)
+                                setTooltipPosition({
+                                  x: point.x,
+                                  y: point.y
+                                })
+                              }}
+                              onMouseLeave={() => setHoveredPoint(null)}
+                            />
+                          </g>
+                        ))}
+
+                        {/* Tooltip */}
+                        {hoveredPoint !== null && points[hoveredPoint] && (
+                          <g>
+                            {/* Tooltip background */}
+                            <rect
+                              x={tooltipPosition.x - 70}
+                              y={tooltipPosition.y - 55}
+                              width="140"
+                              height="45"
+                              rx="8"
+                              fill="#1e293b"
+                              opacity="0.95"
+                              stroke="#334155"
+                              strokeWidth="1"
+                            />
+                            {/* Tooltip content */}
+                            <text
+                              x={tooltipPosition.x}
+                              y={tooltipPosition.y - 32}
+                              textAnchor="middle"
+                              fontSize="12"
+                              fill="#ffffff"
+                              fontWeight="600"
+                            >
+                              {equityCurve[hoveredPoint]?.date}
+                            </text>
+                            <text
+                              x={tooltipPosition.x}
+                              y={tooltipPosition.y - 18}
+                              textAnchor="middle"
+                              fontSize="11"
+                              fill="#60a5fa"
+                              fontWeight="500"
+                            >
+                              {formatCurrency(points[hoveredPoint].capital)}
+                            </text>
+                            {/* Tooltip arrow pointing down */}
+                            <polygon
+                              points={`${tooltipPosition.x - 8},${tooltipPosition.y - 10} ${tooltipPosition.x + 8},${tooltipPosition.y - 10} ${tooltipPosition.x},${tooltipPosition.y}`}
+                              fill="#1e293b"
+                              opacity="0.95"
+                            />
+                          </g>
+                        )}
+
+                        {/* X-axis labels */}
+                        {points.filter((_, index) => index === 0 || index === points.length - 1 || index % Math.ceil(points.length / 4) === 0).map((point, index) => {
+                          const originalIndex = points.indexOf(point)
+                          return (
+                            <text
+                              key={index}
+                              x={point.x}
+                              y={topPadding + height + 20}
+                              textAnchor="middle"
+                              fontSize="10"
+                              fill="#64748b"
+                            >
+                              {equityCurve[originalIndex]?.date}
+                            </text>
+                          )
+                        })}
+
+                        {/* Gradients */}
+                        <defs>
+                          <linearGradient id="gradientGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor="#10b981" stopOpacity="0.3" />
+                            <stop offset="100%" stopColor="#10b981" stopOpacity="0.1" />
+                          </linearGradient>
+                          <linearGradient id="gradientRed" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor="#ef4444" stopOpacity="0.3" />
+                            <stop offset="100%" stopColor="#ef4444" stopOpacity="0.1" />
+                          </linearGradient>
+                        </defs>
+                      </>
+                    )
+                  })()}
+                </svg>
+
+                {/* Legend */}
+                <div className="mt-4 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                      <span className="text-slate-600">Above Starting Capital</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                      <span className="text-slate-600">Below Starting Capital</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 text-slate-600">
+                    <div>
+                      <span className="font-medium">Start: </span>
+                      <span>{formatCurrency(equityCurve[0]?.capital || adjustedStartingCapital)}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium">Current: </span>
+                      <span>{formatCurrency(equityCurve[equityCurve.length - 1]?.capital || currentCapital)}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Additional Metrics Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div className="bg-white rounded-lg p-4 border border-slate-200">
+              <p className="text-sm text-slate-600 mb-1">Max Drawdown</p>
+              <p className="text-xl font-bold text-red-600">{formatCurrency(maxDrawdown)}</p>
+              <p className="text-xs text-slate-500">{maxDrawdownPercent.toFixed(2)}%</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 border border-slate-200">
+              <p className="text-sm text-slate-600 mb-1">Sharpe Ratio</p>
+              <p className="text-xl font-bold text-slate-800">{sharpeRatio}</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 border border-slate-200">
+              <p className="text-sm text-slate-600 mb-1">Avg Trade Duration</p>
+              <p className="text-xl font-bold text-slate-800">{avgDuration} days</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 border border-slate-200">
+              <p className="text-sm text-slate-600 mb-1">Total Trades</p>
+              <p className="text-xl font-bold text-slate-800">{trades.length}</p>
+            </div>
           </div>
-        </div>
-      )}
 
-      {/* Additional Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white rounded-lg p-4 border border-slate-200">
-          <p className="text-sm text-slate-600 mb-1">Max Drawdown</p>
-          <p className="text-xl font-bold text-red-600">{formatCurrency(maxDrawdown)}</p>
-          <p className="text-xs text-slate-500">{maxDrawdownPercent.toFixed(2)}%</p>
-        </div>
-        <div className="bg-white rounded-lg p-4 border border-slate-200">
-          <p className="text-sm text-slate-600 mb-1">Sharpe Ratio</p>
-          <p className="text-xl font-bold text-slate-800">{sharpeRatio}</p>
-        </div>
-        <div className="bg-white rounded-lg p-4 border border-slate-200">
-          <p className="text-sm text-slate-600 mb-1">Avg Trade Duration</p>
-          <p className="text-xl font-bold text-slate-800">{avgDuration} days</p>
-        </div>
-        <div className="bg-white rounded-lg p-4 border border-slate-200">
-          <p className="text-sm text-slate-600 mb-1">Total Trades</p>
-          <p className="text-xl font-bold text-slate-800">{trades.length}</p>
-        </div>
-      </div>
-
-      {/* Strategy Performance */}
-      {Object.keys(strategyStats).length > 0 && (
-        <div className="bg-slate-50 rounded-lg p-6 border border-slate-200 mb-6">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Strategy Performance</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-slate-200">
-                  <th className="text-left py-2 px-4 font-semibold text-slate-700">Strategy</th>
-                  <th className="text-right py-2 px-4 font-semibold text-slate-700">Trades</th>
-                  <th className="text-right py-2 px-4 font-semibold text-slate-700">Win Rate</th>
-                  <th className="text-right py-2 px-4 font-semibold text-slate-700">Total P/L</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(strategyStats).map(([strategy, stats]) => (
-                  <tr key={strategy} className="border-b border-slate-100">
-                    <td className="py-2 px-4 font-medium text-slate-800">{strategy}</td>
-                    <td className="py-2 px-4 text-right text-slate-600">{stats.count}</td>
-                    <td className="py-2 px-4 text-right text-slate-600">
-                      {stats.count > 0 ? ((stats.wins / stats.count) * 100).toFixed(1) : 0}%
-                    </td>
-                    <td className={`py-2 px-4 text-right font-medium ${
-                      stats.pnl >= 0 ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {formatCurrency(stats.pnl)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Monthly Performance */}
-      {monthlyData.length > 0 && (
-        <div className="bg-slate-50 rounded-lg p-6 border border-slate-200">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Monthly Performance</h3>
-          <div className="space-y-2">
-            {monthlyData.map((data, index) => (
-              <div key={index} className="flex items-center justify-between bg-white rounded p-3 border border-slate-200">
-                <span className="font-medium text-slate-800">{data.month}</span>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-slate-600">{data.count} trades</span>
-                  <span className={`font-semibold ${
-                    data.pnl >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {formatCurrency(data.pnl)}
-                  </span>
-                </div>
+          {/* Strategy Performance */}
+          {Object.keys(strategyStats).length > 0 && (
+            <div className="bg-slate-50 rounded-lg p-6 border border-slate-200 mb-6">
+              <h3 className="text-lg font-semibold text-slate-800 mb-4">Strategy Performance</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-slate-200">
+                      <th className="text-left py-2 px-4 font-semibold text-slate-700">Strategy</th>
+                      <th className="text-right py-2 px-4 font-semibold text-slate-700">Trades</th>
+                      <th className="text-right py-2 px-4 font-semibold text-slate-700">Win Rate</th>
+                      <th className="text-right py-2 px-4 font-semibold text-slate-700">Total P/L</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(strategyStats).map(([strategy, stats]) => (
+                      <tr key={strategy} className="border-b border-slate-100">
+                        <td className="py-2 px-4 font-medium text-slate-800">{strategy}</td>
+                        <td className="py-2 px-4 text-right text-slate-600">{stats.count}</td>
+                        <td className="py-2 px-4 text-right text-slate-600">
+                          {stats.count > 0 ? ((stats.wins / stats.count) * 100).toFixed(1) : 0}%
+                        </td>
+                        <td className={`py-2 px-4 text-right font-medium ${stats.pnl >= 0 ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                          {formatCurrency(stats.pnl)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+          )}
+
+          {/* Monthly Performance */}
+          {monthlyData.length > 0 && (
+            <div className="bg-slate-50 rounded-lg p-6 border border-slate-200">
+              <h3 className="text-lg font-semibold text-slate-800 mb-4">Monthly Performance</h3>
+              <div className="space-y-2">
+                {monthlyData.map((data, index) => (
+                  <div key={index} className="flex items-center justify-between bg-white rounded p-3 border border-slate-200">
+                    <span className="font-medium text-slate-800">{data.month}</span>
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm text-slate-600">{data.count} trades</span>
+                      <span className={`font-semibold ${data.pnl >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                        {formatCurrency(data.pnl)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
