@@ -2,7 +2,7 @@
 
 A modern, feature-rich trading journal application built with React and Vite. Track your trades, analyze performance, manage strategies, and improve your trading with comprehensive analytics and planning tools.
 
-![Application Demo](./assets/demo.webp)
+
 
 ## ✨ Features
 
