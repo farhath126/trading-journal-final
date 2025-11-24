@@ -48,14 +48,14 @@ function StrategyManager({ onStrategyChange }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    
+
     if (!formData.name.trim()) {
       alert('Strategy name is required')
       return
     }
 
     let updatedStrategies
-    
+
     if (isAdding) {
       const newStrategy = {
         ...formData,
@@ -71,7 +71,7 @@ function StrategyManager({ onStrategyChange }) {
 
     setStrategies(updatedStrategies)
     saveStrategies(updatedStrategies)
-    
+
     if (onStrategyChange) {
       onStrategyChange(updatedStrategies)
     }
@@ -85,7 +85,7 @@ function StrategyManager({ onStrategyChange }) {
       const updatedStrategies = strategies.filter(s => s.id !== id)
       setStrategies(updatedStrategies)
       saveStrategies(updatedStrategies)
-      
+
       if (onStrategyChange) {
         onStrategyChange(updatedStrategies)
       }
@@ -93,16 +93,18 @@ function StrategyManager({ onStrategyChange }) {
   }
 
   return (
-    <div>
+    <div className="animate-fade-in">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <Target className="w-6 h-6 text-blue-600" />
-          <h2 className="text-2xl font-semibold text-slate-800">Strategy Manager</h2>
+          <div className="p-3 bg-blue-500/10 rounded-xl">
+            <Target className="w-6 h-6 text-blue-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-white tracking-tight">Strategy Manager</h2>
         </div>
         {!isAdding && !editingId && (
           <button
             onClick={handleAdd}
-            className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="px-4 py-2 btn-primary rounded-xl font-medium flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             Add Strategy
@@ -112,13 +114,13 @@ function StrategyManager({ onStrategyChange }) {
 
       {/* Add/Edit Form */}
       {(isAdding || editingId) && (
-        <div className="bg-slate-50 rounded-lg p-6 border border-slate-200 mb-6">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">
+        <div className="glass-panel rounded-2xl p-6 border border-white/10 mb-6 animate-slide-up">
+          <h3 className="text-lg font-bold text-white mb-4">
             {isAdding ? 'Add New Strategy' : 'Edit Strategy'}
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Strategy Name *
               </label>
               <input
@@ -128,12 +130,12 @@ function StrategyManager({ onStrategyChange }) {
                 onChange={handleChange}
                 required
                 placeholder="e.g., Breakout Trading, Mean Reversion"
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="glass-input w-full"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Bias *
               </label>
               <select
@@ -141,16 +143,16 @@ function StrategyManager({ onStrategyChange }) {
                 value={formData.bias}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="glass-input w-full"
               >
-                <option value="bullish">Bullish</option>
-                <option value="bearish">Bearish</option>
-                <option value="neutral">Neutral</option>
+                <option value="bullish" className="bg-gray-900">Bullish</option>
+                <option value="bearish" className="bg-gray-900">Bearish</option>
+                <option value="neutral" className="bg-gray-900">Neutral</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Description
               </label>
               <textarea
@@ -159,14 +161,14 @@ function StrategyManager({ onStrategyChange }) {
                 onChange={handleChange}
                 rows="3"
                 placeholder="Describe your trading strategy..."
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="glass-input w-full"
               />
             </div>
 
             <div className="flex gap-2">
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                className="px-4 py-2 btn-primary rounded-xl font-medium flex items-center gap-2"
               >
                 <Save className="w-4 h-4" />
                 {isAdding ? 'Add' : 'Update'} Strategy
@@ -174,7 +176,7 @@ function StrategyManager({ onStrategyChange }) {
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-4 py-2 bg-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-400 transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-white/5 text-gray-300 font-medium rounded-xl hover:bg-white/10 hover:text-white transition-colors flex items-center gap-2"
               >
                 <X className="w-4 h-4" />
                 Cancel
@@ -186,8 +188,8 @@ function StrategyManager({ onStrategyChange }) {
 
       {/* Strategies List */}
       {strategies.length === 0 && !isAdding && !editingId ? (
-        <div className="text-center py-12 text-slate-500 bg-slate-50 rounded-lg border border-slate-200">
-          <Target className="w-12 h-12 mx-auto mb-4 text-slate-400" />
+        <div className="text-center py-12 text-gray-500 glass-panel rounded-2xl border border-white/5">
+          <Target className="w-12 h-12 mx-auto mb-4 text-gray-600" />
           <p className="text-lg">No strategies created yet.</p>
           <p className="text-sm mt-2">Create your first strategy to get started!</p>
         </div>
@@ -196,36 +198,35 @@ function StrategyManager({ onStrategyChange }) {
           {strategies.map((strategy) => (
             <div
               key={strategy.id}
-              className="bg-white rounded-lg p-5 border border-slate-200 hover:shadow-md transition-shadow"
+              className="glass-card rounded-2xl p-5 border border-white/5 hover:border-blue-500/30 transition-all group"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-slate-800 mb-1">
+                  <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">
                     {strategy.name}
                   </h3>
                   <span
-                    className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                      strategy.bias === 'bullish'
-                        ? 'bg-green-100 text-green-800'
-                        : strategy.bias === 'bearish'
-                        ? 'bg-red-100 text-red-800'
-                        : 'bg-slate-100 text-slate-800'
-                    }`}
+                    className={`inline-block px-2 py-1 rounded-lg text-xs font-medium border ${strategy.bias === 'bullish'
+                      ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                      : strategy.bias === 'bearish'
+                        ? 'bg-red-500/20 text-red-400 border-red-500/30'
+                        : 'bg-white/10 text-gray-300 border-white/10'
+                      }`}
                   >
                     {strategy.bias.charAt(0).toUpperCase() + strategy.bias.slice(1)}
                   </span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleEdit(strategy)}
-                    className="text-blue-500 hover:text-blue-700 transition-colors"
+                    className="p-2 hover:bg-white/10 rounded-lg text-blue-400 transition-colors"
                     title="Edit strategy"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(strategy.id)}
-                    className="text-red-500 hover:text-red-700 transition-colors"
+                    className="p-2 hover:bg-white/10 rounded-lg text-red-400 transition-colors"
                     title="Delete strategy"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -233,7 +234,7 @@ function StrategyManager({ onStrategyChange }) {
                 </div>
               </div>
               {strategy.description && (
-                <p className="text-sm text-slate-600 mt-2">{strategy.description}</p>
+                <p className="text-sm text-gray-400 mt-2">{strategy.description}</p>
               )}
             </div>
           ))}

@@ -18,7 +18,7 @@ function StatCard({ title, value, type = 'simple', data = {}, subValue, subLabel
                         cy="30"
                         r="25"
                         fill="none"
-                        stroke="#e2e8f0"
+                        stroke="#1f2937"
                         strokeWidth="6"
                         strokeDasharray={strokeDasharray}
                         strokeDashoffset={circumference / 2}
@@ -56,7 +56,7 @@ function StatCard({ title, value, type = 'simple', data = {}, subValue, subLabel
                         cy="25"
                         r="20"
                         fill="none"
-                        stroke="#e2e8f0"
+                        stroke="#1f2937"
                         strokeWidth="5"
                     />
                     <circle
@@ -84,7 +84,7 @@ function StatCard({ title, value, type = 'simple', data = {}, subValue, subLabel
 
         return (
             <div className="w-24 flex flex-col gap-1">
-                <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden flex">
+                <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden flex">
                     <div style={{ width: `${winWidth}%` }} className="h-full bg-green-500" />
                     <div style={{ width: `${lossWidth}%` }} className="h-full bg-red-500" />
                 </div>
@@ -97,26 +97,28 @@ function StatCard({ title, value, type = 'simple', data = {}, subValue, subLabel
     }
 
     return (
-        <div className="bg-white rounded-xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 uppercase tracking-wide">
+        <div className="glass-card rounded-2xl p-5 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            <div className="flex items-start justify-between mb-2 relative z-10">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                     {title}
-                    <Info className="w-3.5 h-3.5 text-slate-300 cursor-help" />
+                    <Info className="w-3.5 h-3.5 text-gray-600 hover:text-gray-300 cursor-help transition-colors" />
                 </div>
                 {type === 'simple' && (
-                    <div className="p-1.5 bg-slate-50 rounded-lg">
+                    <div className="p-2 bg-white/5 rounded-lg border border-white/5">
                         {data.icon}
                     </div>
                 )}
             </div>
 
-            <div className="flex items-end justify-between">
+            <div className="flex items-end justify-between relative z-10">
                 <div>
-                    <div className="text-2xl font-bold text-slate-800 tracking-tight">
+                    <div className="text-2xl font-bold text-white tracking-tight">
                         {value}
                     </div>
                     {subValue && (
-                        <div className="text-xs font-medium text-slate-400 mt-1">
+                        <div className="text-xs font-medium text-gray-500 mt-1">
                             {subLabel}: <span className={data.subColor}>{subValue}</span>
                         </div>
                     )}

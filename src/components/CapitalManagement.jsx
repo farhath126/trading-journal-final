@@ -26,7 +26,7 @@ function CapitalManagement({ settings, onCapitalChange }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    
+
     if (!formData.amount || formData.amount <= 0) {
       alert('Please enter a valid amount')
       return
@@ -44,7 +44,7 @@ function CapitalManagement({ settings, onCapitalChange }) {
     const updatedAdjustments = [adjustment, ...adjustments]
     setAdjustments(updatedAdjustments)
     saveCapitalAdjustments(updatedAdjustments)
-    
+
     if (onCapitalChange) {
       onCapitalChange(updatedAdjustments)
     }
@@ -65,7 +65,7 @@ function CapitalManagement({ settings, onCapitalChange }) {
       const updatedAdjustments = adjustments.filter(a => a.id !== id)
       setAdjustments(updatedAdjustments)
       saveCapitalAdjustments(updatedAdjustments)
-      
+
       if (onCapitalChange) {
         onCapitalChange(updatedAdjustments)
       }
@@ -93,66 +93,64 @@ function CapitalManagement({ settings, onCapitalChange }) {
   const totalDeposits = adjustments
     .filter(a => a.type === 'deposit')
     .reduce((sum, a) => sum + (a.amount || 0), 0)
-  
+
   const totalWithdrawals = adjustments
     .filter(a => a.type === 'withdrawal')
     .reduce((sum, a) => sum + (a.amount || 0), 0)
-  
+
   const netAdjustments = totalDeposits - totalWithdrawals
 
   return (
-    <div>
+    <div className="animate-fade-in">
       <div className="flex items-center gap-3 mb-6">
-        <DollarSign className="w-6 h-6 text-blue-600" />
-        <h2 className="text-2xl font-semibold text-slate-800">Capital Management</h2>
+        <div className="p-3 bg-blue-500/10 rounded-xl">
+          <DollarSign className="w-6 h-6 text-blue-400" />
+        </div>
+        <h2 className="text-2xl font-bold text-white tracking-tight">Capital Management</h2>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+        <div className="glass-card rounded-2xl p-4 border border-green-500/20 bg-green-500/5">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-green-700">Total Deposits</span>
-            <Plus className="w-4 h-4 text-green-600" />
+            <span className="text-sm font-medium text-green-400">Total Deposits</span>
+            <Plus className="w-4 h-4 text-green-400" />
           </div>
-          <p className="text-2xl font-bold text-green-600">{formatCurrency(totalDeposits)}</p>
+          <p className="text-2xl font-bold text-green-400">{formatCurrency(totalDeposits)}</p>
         </div>
-        <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+        <div className="glass-card rounded-2xl p-4 border border-red-500/20 bg-red-500/5">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-red-700">Total Withdrawals</span>
-            <Minus className="w-4 h-4 text-red-600" />
+            <span className="text-sm font-medium text-red-400">Total Withdrawals</span>
+            <Minus className="w-4 h-4 text-red-400" />
           </div>
-          <p className="text-2xl font-bold text-red-600">{formatCurrency(totalWithdrawals)}</p>
+          <p className="text-2xl font-bold text-red-400">{formatCurrency(totalWithdrawals)}</p>
         </div>
-        <div className={`rounded-lg p-4 border ${
-          netAdjustments >= 0
-            ? 'bg-blue-50 border-blue-200'
-            : 'bg-orange-50 border-orange-200'
-        }`}>
+        <div className={`glass-card rounded-2xl p-4 border ${netAdjustments >= 0
+            ? 'border-blue-500/20 bg-blue-500/5'
+            : 'border-orange-500/20 bg-orange-500/5'
+          }`}>
           <div className="flex items-center justify-between mb-2">
-            <span className={`text-sm font-medium ${
-              netAdjustments >= 0 ? 'text-blue-700' : 'text-orange-700'
-            }`}>
+            <span className={`text-sm font-medium ${netAdjustments >= 0 ? 'text-blue-400' : 'text-orange-400'
+              }`}>
               Net Adjustments
             </span>
-            <DollarSign className={`w-4 h-4 ${
-              netAdjustments >= 0 ? 'text-blue-600' : 'text-orange-600'
-            }`} />
+            <DollarSign className={`w-4 h-4 ${netAdjustments >= 0 ? 'text-blue-400' : 'text-orange-400'
+              }`} />
           </div>
-          <p className={`text-2xl font-bold ${
-            netAdjustments >= 0 ? 'text-blue-600' : 'text-orange-600'
-          }`}>
+          <p className={`text-2xl font-bold ${netAdjustments >= 0 ? 'text-blue-400' : 'text-orange-400'
+            }`}>
             {formatCurrency(netAdjustments)}
           </p>
         </div>
       </div>
 
       {/* Add Adjustment Form */}
-      <div className="bg-slate-50 rounded-lg p-6 border border-slate-200 mb-6">
-        <h3 className="text-lg font-semibold text-slate-800 mb-4">Add Capital Adjustment</h3>
+      <div className="glass-panel rounded-2xl p-6 border border-white/10 mb-6">
+        <h3 className="text-lg font-bold text-white mb-4">Add Capital Adjustment</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Type *
               </label>
               <select
@@ -160,26 +158,26 @@ function CapitalManagement({ settings, onCapitalChange }) {
                 value={formData.type}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="glass-input w-full"
               >
-                <option value="deposit">Deposit (Add Capital)</option>
-                <option value="withdrawal">Withdrawal (Remove Capital)</option>
+                <option value="deposit" className="bg-gray-900">Deposit (Add Capital)</option>
+                <option value="withdrawal" className="bg-gray-900">Withdrawal (Remove Capital)</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Amount *
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-600">
-                  {settings?.currency === 'USD' ? '$' : 
-                   settings?.currency === 'EUR' ? '€' :
-                   settings?.currency === 'GBP' ? '£' :
-                   settings?.currency === 'JPY' ? '¥' :
-                   settings?.currency === 'INR' ? '₹' :
-                   settings?.currency === 'BTC' ? '₿' :
-                   settings?.currency === 'ETH' ? 'Ξ' : '$'}
+                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  {settings?.currency === 'USD' ? '$' :
+                    settings?.currency === 'EUR' ? '€' :
+                      settings?.currency === 'GBP' ? '£' :
+                        settings?.currency === 'JPY' ? '¥' :
+                          settings?.currency === 'INR' ? '₹' :
+                            settings?.currency === 'BTC' ? '₿' :
+                              settings?.currency === 'ETH' ? 'Ξ' : '$'}
                 </span>
                 <input
                   type="number"
@@ -190,13 +188,13 @@ function CapitalManagement({ settings, onCapitalChange }) {
                   step="0.01"
                   min="0.01"
                   placeholder="0.00"
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="glass-input w-full pl-10"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Date *
               </label>
               <input
@@ -205,12 +203,12 @@ function CapitalManagement({ settings, onCapitalChange }) {
                 value={formData.date}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="glass-input w-full"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Notes
               </label>
               <input
@@ -219,14 +217,14 @@ function CapitalManagement({ settings, onCapitalChange }) {
                 value={formData.notes}
                 onChange={handleChange}
                 placeholder="Optional notes about this adjustment"
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="glass-input w-full"
               />
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full md:w-auto px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+            className="w-full md:w-auto px-6 py-3 btn-primary rounded-xl font-medium flex items-center justify-center gap-2"
           >
             <Save className="w-5 h-5" />
             {formData.type === 'deposit' ? 'Add Deposit' : 'Record Withdrawal'}
@@ -236,43 +234,42 @@ function CapitalManagement({ settings, onCapitalChange }) {
 
       {/* Adjustments History */}
       <div>
-        <h3 className="text-lg font-semibold text-slate-800 mb-4">
+        <h3 className="text-lg font-bold text-white mb-4">
           Adjustment History ({adjustments.length})
         </h3>
         {adjustments.length === 0 ? (
-          <div className="text-center py-12 text-slate-500 bg-slate-50 rounded-lg border border-slate-200">
-            <DollarSign className="w-12 h-12 mx-auto mb-4 text-slate-400" />
+          <div className="text-center py-12 text-gray-500 glass-panel rounded-2xl border border-white/5">
+            <DollarSign className="w-12 h-12 mx-auto mb-4 text-gray-600" />
             <p className="text-lg">No capital adjustments yet.</p>
             <p className="text-sm mt-2">Add your first deposit or withdrawal above.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto custom-scrollbar glass-panel rounded-2xl border border-white/10">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="border-b border-slate-200">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700">Date</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700">Type</th>
-                  <th className="text-right py-3 px-4 font-semibold text-slate-700">Amount</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700">Notes</th>
-                  <th className="text-center py-3 px-4 font-semibold text-slate-700">Actions</th>
+                <tr className="border-b border-white/10 bg-white/5">
+                  <th className="text-left py-3 px-4 font-semibold text-gray-400">Date</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-400">Type</th>
+                  <th className="text-right py-3 px-4 font-semibold text-gray-400">Amount</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-400">Notes</th>
+                  <th className="text-center py-3 px-4 font-semibold text-gray-400">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {adjustments.map((adjustment) => (
                   <tr
                     key={adjustment.id}
-                    className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
+                    className="border-b border-white/5 hover:bg-white/5 transition-colors"
                   >
-                    <td className="py-3 px-4 text-slate-600">
+                    <td className="py-3 px-4 text-gray-300">
                       {formatDate(adjustment.date)}
                     </td>
                     <td className="py-3 px-4">
                       <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${
-                          adjustment.type === 'deposit'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}
+                        className={`px-2 py-1 rounded-lg text-xs font-medium border ${adjustment.type === 'deposit'
+                            ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                            : 'bg-red-500/20 text-red-400 border-red-500/30'
+                          }`}
                       >
                         {adjustment.type === 'deposit' ? (
                           <span className="flex items-center gap-1">
@@ -288,20 +285,19 @@ function CapitalManagement({ settings, onCapitalChange }) {
                       </span>
                     </td>
                     <td
-                      className={`py-3 px-4 text-right font-medium ${
-                        adjustment.type === 'deposit' ? 'text-green-600' : 'text-red-600'
-                      }`}
+                      className={`py-3 px-4 text-right font-medium ${adjustment.type === 'deposit' ? 'text-green-400' : 'text-red-400'
+                        }`}
                     >
                       {adjustment.type === 'deposit' ? '+' : '-'}
                       {formatCurrency(adjustment.amount)}
                     </td>
-                    <td className="py-3 px-4 text-slate-600">
-                      {adjustment.notes || <span className="text-slate-400">-</span>}
+                    <td className="py-3 px-4 text-gray-400">
+                      {adjustment.notes || <span className="text-gray-600">-</span>}
                     </td>
                     <td className="py-3 px-4 text-center">
                       <button
                         onClick={() => handleDelete(adjustment.id)}
-                        className="text-red-500 hover:text-red-700 transition-colors"
+                        className="p-2 hover:bg-white/10 rounded-lg text-red-400 transition-colors"
                         title="Delete adjustment"
                       >
                         <Trash2 className="w-4 h-4" />

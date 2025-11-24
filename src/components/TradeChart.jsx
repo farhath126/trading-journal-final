@@ -21,30 +21,30 @@ function TradeChart({ symbol, entryPrice, exitPrice, type = 'long' }) {
         // Create Chart
         const chart = createChart(chartContainerRef.current, {
             layout: {
-                background: { type: ColorType.Solid, color: 'white' },
-                textColor: 'black',
+                background: { type: ColorType.Solid, color: 'transparent' },
+                textColor: '#9ca3af', // gray-400
             },
             width: chartContainerRef.current.clientWidth,
             height: 500,
             grid: {
-                vertLines: { color: '#f0f3fa' },
-                horzLines: { color: '#f0f3fa' },
+                vertLines: { color: '#1f2937' }, // gray-800
+                horzLines: { color: '#1f2937' },
             },
             rightPriceScale: {
-                borderColor: '#d1d4dc',
+                borderColor: '#374151', // gray-700
             },
             timeScale: {
-                borderColor: '#d1d4dc',
+                borderColor: '#374151',
             },
         });
 
         // Create Series ONCE using v5 API
         const candlestickSeries = chart.addSeries(CandlestickSeries, {
-            upColor: '#26a69a',
-            downColor: '#ef5350',
+            upColor: '#10b981', // green-500
+            downColor: '#ef4444', // red-500
             borderVisible: false,
-            wickUpColor: '#26a69a',
-            wickDownColor: '#ef5350',
+            wickUpColor: '#10b981',
+            wickDownColor: '#ef4444',
         });
 
         chartRef.current = chart;
@@ -120,7 +120,7 @@ function TradeChart({ symbol, entryPrice, exitPrice, type = 'long' }) {
         if (entryPrice) {
             entryLineRef.current = seriesRef.current.createPriceLine({
                 price: parseFloat(entryPrice),
-                color: '#2962FF',
+                color: '#3b82f6', // blue-500
                 lineWidth: 2,
                 lineStyle: 2,
                 axisLabelVisible: true,
@@ -135,7 +135,7 @@ function TradeChart({ symbol, entryPrice, exitPrice, type = 'long' }) {
 
             exitLineRef.current = seriesRef.current.createPriceLine({
                 price: parseFloat(exitPrice),
-                color: isWin ? '#00E676' : '#FF1744',
+                color: isWin ? '#10b981' : '#ef4444', // green-500 : red-500
                 lineWidth: 2,
                 lineStyle: 2,
                 axisLabelVisible: true,
@@ -148,13 +148,13 @@ function TradeChart({ symbol, entryPrice, exitPrice, type = 'long' }) {
     return (
         <div className="relative w-full h-full">
             {loading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 z-10">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-900/80 backdrop-blur-sm z-10">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 </div>
             )}
             {error && (
-                <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
-                    <p className="text-red-500 font-medium">{error}</p>
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-900/80 backdrop-blur-sm z-10">
+                    <p className="text-red-400 font-medium">{error}</p>
                 </div>
             )}
             <div ref={chartContainerRef} className="w-full h-full" />

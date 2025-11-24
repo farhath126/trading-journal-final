@@ -29,7 +29,7 @@ function DailyNetPnL({ data = [] }) {
                         y1={zeroY}
                         x2="100%"
                         y2={zeroY}
-                        stroke="#f1f5f9"
+                        stroke="#374151"
                         strokeWidth="1"
                         strokeDasharray="4 4"
                     />
@@ -63,24 +63,24 @@ function DailyNetPnL({ data = [] }) {
     }
 
     return (
-        <div className="bg-white rounded-xl p-6 border border-slate-100 shadow-sm h-full">
+        <div className="glass-panel rounded-2xl p-6 h-full">
             <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+                <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-300">
                     Net Daily P&L
-                    <Info className="w-4 h-4 text-slate-300" />
+                    <Info className="w-4 h-4 text-gray-500 hover:text-gray-300 transition-colors cursor-help" />
                 </div>
             </div>
 
             {data.length > 0 ? (
                 renderBarChart()
             ) : (
-                <div className="h-48 flex items-center justify-center text-slate-400 text-sm">
+                <div className="h-48 flex items-center justify-center text-gray-500 text-sm">
                     No data available
                 </div>
             )}
 
             {/* X-Axis Labels (Simplified) */}
-            <div className="flex justify-between text-[10px] text-slate-400 mt-2 px-2">
+            <div className="flex justify-between text-[10px] text-gray-500 mt-2 px-2">
                 {data.length > 0 && (
                     <>
                         <span>{data[0]?.date}</span>

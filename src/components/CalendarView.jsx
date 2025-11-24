@@ -56,7 +56,7 @@ function CalendarView({ trades, settings }) {
 
         // Empty cells for days before the first day of the month
         for (let i = 0; i < firstDay; i++) {
-            calendarDays.push(<div key={`empty-${i}`} className="h-24 bg-slate-50/50 border border-slate-100"></div>)
+            calendarDays.push(<div key={`empty-${i}`} className="h-24 bg-white/5 border border-white/5"></div>)
         }
 
         // Days of the month
@@ -69,53 +69,53 @@ function CalendarView({ trades, settings }) {
             calendarDays.push(
                 <div
                     key={day}
-                    className={`h-24 border border-slate-100 p-2 relative group transition-colors ${stats
-                            ? stats.pnl > 0
-                                ? 'bg-green-50 hover:bg-green-100'
-                                : stats.pnl < 0
-                                    ? 'bg-red-50 hover:bg-red-100'
-                                    : 'bg-slate-50 hover:bg-slate-100'
-                            : 'bg-white hover:bg-slate-50'
+                    className={`h-24 border border-white/5 p-2 relative group transition-all ${stats
+                        ? stats.pnl > 0
+                            ? 'bg-green-500/10 hover:bg-green-500/20'
+                            : stats.pnl < 0
+                                ? 'bg-red-500/10 hover:bg-red-500/20'
+                                : 'bg-white/5 hover:bg-white/10'
+                        : 'bg-transparent hover:bg-white/5'
                         } ${isToday ? 'ring-2 ring-blue-500 ring-inset' : ''}`}
                 >
-                    <span className={`text-sm font-medium ${isToday ? 'text-blue-600' : 'text-slate-400'
+                    <span className={`text-sm font-medium ${isToday ? 'text-blue-400' : 'text-gray-500'
                         }`}>
                         {day}
                     </span>
 
                     {stats && (
                         <div className="mt-1">
-                            <div className={`text-sm font-bold ${stats.pnl >= 0 ? 'text-green-700' : 'text-red-700'
+                            <div className={`text-sm font-bold ${stats.pnl >= 0 ? 'text-green-400' : 'text-red-400'
                                 }`}>
                                 {formatCurrency(stats.pnl)}
                             </div>
-                            <div className="text-xs text-slate-500 mt-1">
+                            <div className="text-xs text-gray-500 mt-1">
                                 {stats.count} trade{stats.count !== 1 ? 's' : ''}
                             </div>
 
                             {/* Tooltip */}
-                            <div className="absolute z-10 bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block w-48 bg-slate-800 text-white text-xs rounded-lg p-3 shadow-xl">
-                                <div className="font-semibold mb-1 border-b border-slate-600 pb-1">
+                            <div className="absolute z-10 bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block w-48 bg-black/90 backdrop-blur-md border border-white/10 text-white text-xs rounded-xl p-3 shadow-2xl animate-fade-in">
+                                <div className="font-semibold mb-1 border-b border-white/10 pb-1 text-gray-300">
                                     {date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
                                 </div>
                                 <div className="space-y-1">
                                     <div className="flex justify-between">
-                                        <span>Net P/L:</span>
+                                        <span className="text-gray-400">Net P/L:</span>
                                         <span className={stats.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
                                             {formatCurrency(stats.pnl)}
                                         </span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span>Trades:</span>
-                                        <span>{stats.count}</span>
+                                        <span className="text-gray-400">Trades:</span>
+                                        <span className="text-white">{stats.count}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span>Win Rate:</span>
-                                        <span>{Math.round((stats.wins / stats.count) * 100)}%</span>
+                                        <span className="text-gray-400">Win Rate:</span>
+                                        <span className="text-blue-400">{Math.round((stats.wins / stats.count) * 100)}%</span>
                                     </div>
                                 </div>
                                 {/* Arrow */}
-                                <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                                <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black/90"></div>
                             </div>
                         </div>
                     )}
@@ -127,48 +127,48 @@ function CalendarView({ trades, settings }) {
     }
 
     return (
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-                <h3 className="font-semibold text-slate-800 flex items-center gap-2">
-                    <CalendarIcon className="w-5 h-5 text-slate-500" />
+        <div className="glass-panel rounded-2xl overflow-hidden border border-white/10">
+            <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/5">
+                <h3 className="font-bold text-white flex items-center gap-2">
+                    <CalendarIcon className="w-5 h-5 text-blue-400" />
                     Performance Calendar
                 </h3>
                 <div className="flex items-center gap-4">
-                    <button onClick={prevMonth} className="p-1 hover:bg-slate-200 rounded-full transition-colors">
-                        <ChevronLeft className="w-5 h-5 text-slate-600" />
+                    <button onClick={prevMonth} className="p-1 hover:bg-white/10 rounded-full transition-colors">
+                        <ChevronLeft className="w-5 h-5 text-gray-400 hover:text-white" />
                     </button>
-                    <span className="font-medium text-slate-700 min-w-[140px] text-center">
+                    <span className="font-medium text-gray-300 min-w-[140px] text-center">
                         {monthName} {year}
                     </span>
-                    <button onClick={nextMonth} className="p-1 hover:bg-slate-200 rounded-full transition-colors">
-                        <ChevronRight className="w-5 h-5 text-slate-600" />
+                    <button onClick={nextMonth} className="p-1 hover:bg-white/10 rounded-full transition-colors">
+                        <ChevronRight className="w-5 h-5 text-gray-400 hover:text-white" />
                     </button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50">
+            <div className="grid grid-cols-7 border-b border-white/10 bg-white/5">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                    <div key={day} className="py-2 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    <div key={day} className="py-2 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         {day}
                     </div>
                 ))}
             </div>
 
-            <div className="grid grid-cols-7 bg-slate-200 gap-px border-b border-slate-200">
+            <div className="grid grid-cols-7 bg-black/20 gap-px border-b border-white/10">
                 {renderCalendarDays()}
             </div>
 
-            <div className="p-4 bg-slate-50 flex items-center justify-center gap-6 text-xs text-slate-600">
+            <div className="p-4 bg-white/5 flex items-center justify-center gap-6 text-xs text-gray-400">
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-green-100 border border-green-200 rounded"></div>
+                    <div className="w-3 h-3 bg-green-500/20 border border-green-500/30 rounded"></div>
                     <span>Profitable Day</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-red-100 border border-red-200 rounded"></div>
+                    <div className="w-3 h-3 bg-red-500/20 border border-red-500/30 rounded"></div>
                     <span>Loss Day</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-white border border-slate-200 rounded"></div>
+                    <div className="w-3 h-3 bg-white/5 border border-white/10 rounded"></div>
                     <span>No Trades</span>
                 </div>
             </div>

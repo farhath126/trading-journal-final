@@ -220,16 +220,16 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
   }
 
   return (
-    <div>
+    <div className="animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold text-slate-800">
+        <h2 className="text-2xl font-bold text-white tracking-tight">
           {editTrade ? 'Edit Trade' : 'Add New Trade'}
         </h2>
         {editTrade && onCancelEdit && (
           <button
             type="button"
             onClick={onCancelEdit}
-            className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors flex items-center gap-2"
+            className="px-4 py-2 text-gray-400 hover:text-white transition-colors flex items-center gap-2 hover:bg-white/5 rounded-xl"
           >
             <X className="w-4 h-4" />
             Cancel
@@ -240,7 +240,7 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Symbol */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Symbol *
             </label>
             <input
@@ -250,13 +250,13 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
               onChange={handleChange}
               required
               placeholder="e.g., AAPL, BTC/USD"
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="glass-input w-full"
             />
           </div>
 
           {/* Type */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Type *
             </label>
             <select
@@ -264,16 +264,16 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
               value={formData.type}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="glass-input w-full"
             >
-              <option value="long">Long</option>
-              <option value="short">Short</option>
+              <option value="long" className="bg-gray-900">Long</option>
+              <option value="short" className="bg-gray-900">Short</option>
             </select>
           </div>
 
           {/* Entry Price */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Entry Price *
             </label>
             <input
@@ -285,13 +285,13 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
               step="0.01"
               min="0"
               placeholder="0.00"
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="glass-input w-full"
             />
           </div>
 
           {/* Exit Price */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Exit Price *
             </label>
             <input
@@ -303,13 +303,13 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
               step="0.01"
               min="0"
               placeholder="0.00"
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="glass-input w-full"
             />
           </div>
 
           {/* Quantity */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Quantity *
             </label>
             <input
@@ -321,13 +321,13 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
               step="0.01"
               min="0"
               placeholder="0.00"
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="glass-input w-full"
             />
           </div>
 
           {/* Entry Date */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Entry Date *
             </label>
             <input
@@ -336,13 +336,13 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
               value={formData.entryDate}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="glass-input w-full"
             />
           </div>
 
           {/* Exit Date */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Exit Date *
             </label>
             <input
@@ -351,30 +351,30 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
               value={formData.exitDate}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="glass-input w-full"
             />
           </div>
 
           {/* Strategy */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Strategy / Bias
             </label>
             <select
               name="strategy"
               value={formData.strategy}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="glass-input w-full"
             >
-              <option value="">No Strategy</option>
+              <option value="" className="bg-gray-900">No Strategy</option>
               {strategies.map(strategy => (
-                <option key={strategy.id} value={strategy.name}>
+                <option key={strategy.id} value={strategy.name} className="bg-gray-900">
                   {strategy.name} ({strategy.bias})
                 </option>
               ))}
             </select>
             {strategies.length === 0 && (
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 Create strategies in the Strategy Manager tab
               </p>
             )}
@@ -382,8 +382,8 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
 
           {/* Tags */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
-              <Tag className="w-4 h-4" />
+            <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+              <Tag className="w-4 h-4 text-blue-400" />
               Tags (comma-separated)
             </label>
             <input
@@ -392,34 +392,34 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
               value={formData.tags}
               onChange={handleChange}
               placeholder="e.g., breakout, momentum, swing"
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="glass-input w-full"
             />
           </div>
 
           {/* Conviction Level */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
+            <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-purple-400" />
               Conviction Level
             </label>
             <select
               name="conviction"
               value={formData.conviction}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="glass-input w-full"
             >
-              <option value="">Select Conviction</option>
-              <option value="A+">A+ (Highest)</option>
-              <option value="A">A (High)</option>
-              <option value="B">B (Medium)</option>
+              <option value="" className="bg-gray-900">Select Conviction</option>
+              <option value="A+" className="bg-gray-900">A+ (Highest)</option>
+              <option value="A" className="bg-gray-900">A (High)</option>
+              <option value="B" className="bg-gray-900">B (Medium)</option>
             </select>
           </div>
         </div>
 
         {/* Mistakes */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-orange-500" />
+          <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-orange-400" />
             Mistakes
           </label>
           <div className="flex flex-wrap gap-2">
@@ -428,9 +428,9 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
                 key={mistake}
                 type="button"
                 onClick={() => handleMistakeToggle(mistake)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${formData.mistakes.includes(mistake)
-                  ? 'bg-red-100 text-red-700 border-red-200'
-                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all border ${formData.mistakes.includes(mistake)
+                  ? 'bg-red-500/20 text-red-400 border-red-500/30'
+                  : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white'
                   }`}
               >
                 {mistake}
@@ -441,7 +441,7 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
 
         {/* Notes */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Notes
           </label>
           <textarea
@@ -450,13 +450,13 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
             onChange={handleChange}
             rows="4"
             placeholder="Add any notes about this trade..."
-            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="glass-input w-full"
           />
         </div>
 
         {/* URLs */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Relevant URLs
           </label>
           <div className="space-y-2">
@@ -467,13 +467,13 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
                   value={url}
                   onChange={(e) => handleUrlChange(index, e.target.value)}
                   placeholder="https://example.com"
-                  className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="glass-input flex-1"
                 />
                 {urls.length > 1 && (
                   <button
                     type="button"
                     onClick={() => handleRemoveUrl(index)}
-                    className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="px-3 py-2 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors border border-transparent hover:border-red-500/20"
                     title="Remove URL"
                   >
                     <X className="w-4 h-4" />
@@ -484,7 +484,7 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
             <button
               type="button"
               onClick={handleAddUrl}
-              className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm"
+              className="flex items-center gap-2 px-4 py-2 text-blue-400 hover:bg-blue-500/10 rounded-xl transition-colors text-sm border border-transparent hover:border-blue-500/20"
             >
               <LinkIcon className="w-4 h-4" />
               Add Another URL
@@ -494,16 +494,20 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
 
         {/* Screenshots */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Screenshots
           </label>
           <div className="space-y-4">
             {/* Upload Button */}
-            <label className="flex items-center justify-center w-full px-4 py-6 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors">
-              <div className="flex flex-col items-center gap-2">
-                <Upload className="w-6 h-6 text-slate-600" />
-                <span className="text-sm text-slate-600">Click to upload screenshots</span>
-                <span className="text-xs text-slate-500">PNG, JPG, GIF up to 10MB</span>
+            <label className="flex items-center justify-center w-full px-4 py-8 border-2 border-dashed border-white/10 rounded-2xl cursor-pointer hover:border-blue-500/50 hover:bg-blue-500/5 transition-all group">
+              <div className="flex flex-col items-center gap-3">
+                <div className="p-3 bg-white/5 rounded-full group-hover:bg-blue-500/20 transition-colors">
+                  <Upload className="w-6 h-6 text-gray-400 group-hover:text-blue-400" />
+                </div>
+                <div className="text-center">
+                  <span className="text-sm font-medium text-gray-300 group-hover:text-blue-300">Click to upload screenshots</span>
+                  <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
+                </div>
               </div>
               <input
                 type="file"
@@ -518,23 +522,27 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
             {screenshots.length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {screenshots.map((screenshot) => (
-                  <div key={screenshot.id} className="relative group">
+                  <div key={screenshot.id} className="relative group rounded-xl overflow-hidden border border-white/10">
                     <img
                       src={screenshot.data}
                       alt={screenshot.name}
-                      className="w-full h-32 object-cover rounded-lg border border-slate-200"
+                      className="w-full h-32 object-cover transition-transform duration-500 group-hover:scale-110"
                     />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveScreenshot(screenshot.id)}
-                      className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                      title="Remove screenshot"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                    <p className="text-xs text-slate-600 mt-1 truncate" title={screenshot.name}>
-                      {screenshot.name}
-                    </p>
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveScreenshot(screenshot.id)}
+                        className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors transform hover:scale-110"
+                        title="Remove screenshot"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/60 backdrop-blur-sm">
+                      <p className="text-xs text-gray-300 truncate" title={screenshot.name}>
+                        {screenshot.name}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -543,10 +551,10 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
         </div>
 
         {/* Submit Button */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 pt-4 border-t border-white/10">
           <button
             type="submit"
-            className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+            className="px-6 py-3 btn-primary rounded-xl font-medium flex items-center justify-center gap-2 min-w-[160px]"
           >
             <Save className="w-5 h-5" />
             {editTrade ? 'Update Trade' : 'Save Trade'}
@@ -555,7 +563,7 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
             <button
               type="button"
               onClick={onCancelEdit}
-              className="px-6 py-3 bg-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-400 transition-colors"
+              className="px-6 py-3 bg-white/5 text-gray-300 font-medium rounded-xl hover:bg-white/10 hover:text-white transition-colors"
             >
               Cancel
             </button>
@@ -565,9 +573,12 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
 
       {/* Chart Section */}
       {formData.symbol && (
-        <div className="mt-8 pt-8 border-t border-slate-200">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Chart Analysis</h3>
-          <div className="h-[500px] w-full bg-white rounded-lg border border-slate-200 overflow-hidden">
+        <div className="mt-8 pt-8 border-t border-white/10">
+          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-blue-400" />
+            Chart Analysis
+          </h3>
+          <div className="h-[500px] w-full glass-panel rounded-2xl overflow-hidden border border-white/10">
             <ErrorBoundary>
               <TradeChart
                 symbol={formData.symbol}

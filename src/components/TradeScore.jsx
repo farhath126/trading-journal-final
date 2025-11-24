@@ -31,7 +31,7 @@ function TradeScore({ score = 0, metrics = {} }) {
                     <polygon
                         points={bgPoints}
                         fill="none"
-                        stroke="#f1f5f9"
+                        stroke="#374151"
                         strokeWidth="1"
                     />
                     {/* Axes */}
@@ -44,7 +44,7 @@ function TradeScore({ score = 0, metrics = {} }) {
                                 y1={center}
                                 x2={coords.split(',')[0]}
                                 y2={coords.split(',')[1]}
-                                stroke="#f1f5f9"
+                                stroke="#374151"
                                 strokeWidth="1"
                             />
                         )
@@ -70,7 +70,7 @@ function TradeScore({ score = 0, metrics = {} }) {
                                 cy={y}
                                 r="3"
                                 fill="#8b5cf6"
-                                stroke="white"
+                                stroke="#030712"
                                 strokeWidth="1.5"
                             />
                         )
@@ -78,27 +78,27 @@ function TradeScore({ score = 0, metrics = {} }) {
                 </svg>
 
                 {/* Labels */}
-                <div className="absolute top-2 text-[10px] font-medium text-slate-400">Win %</div>
-                <div className="absolute bottom-8 right-8 text-[10px] font-medium text-slate-400">Profit factor</div>
-                <div className="absolute bottom-8 left-8 text-[10px] font-medium text-slate-400">Avg win/loss</div>
+                <div className="absolute top-2 text-[10px] font-medium text-gray-500">Win %</div>
+                <div className="absolute bottom-8 right-8 text-[10px] font-medium text-gray-500">Profit factor</div>
+                <div className="absolute bottom-8 left-8 text-[10px] font-medium text-gray-500">Avg win/loss</div>
             </div>
         )
     }
 
     return (
-        <div className="bg-white rounded-xl p-6 border border-slate-100 shadow-sm h-full">
-            <div className="flex items-center gap-1.5 text-sm font-semibold text-slate-700 mb-4">
+        <div className="glass-panel rounded-2xl p-6 h-full">
+            <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-300 mb-4">
                 Trade Score
-                <Info className="w-4 h-4 text-slate-300" />
+                <Info className="w-4 h-4 text-gray-500 hover:text-gray-300 transition-colors cursor-help" />
             </div>
 
             {renderRadarChart()}
 
             <div className="text-center mt-2">
-                <div className="text-sm text-slate-500 mb-1">Your Trade Score:</div>
+                <div className="text-sm text-gray-400 mb-1">Your Trade Score:</div>
                 <div className="flex items-center justify-center gap-2">
-                    <span className="text-3xl font-bold text-slate-800">{score}</span>
-                    <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-full">
+                    <span className="text-3xl font-bold text-white">{score}</span>
+                    <span className="px-2 py-0.5 bg-green-500/20 text-green-400 border border-green-500/30 text-xs font-bold rounded-full">
                         +1
                     </span>
                 </div>

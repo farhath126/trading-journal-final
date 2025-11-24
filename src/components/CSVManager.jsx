@@ -9,7 +9,7 @@ function CSVManager({ onImport, trades, settings }) {
 
   const handleFileSelect = (file) => {
     if (!file) return
-    
+
     if (!file.name.endsWith('.csv')) {
       alert('Please select a CSV file')
       return
@@ -20,7 +20,7 @@ function CSVManager({ onImport, trades, settings }) {
 
     importTradesFromCSV(file, (importedTrades, errors) => {
       setImporting(false)
-      
+
       if (errors.length > 0) {
         setImportResult({
           success: true,
@@ -53,7 +53,7 @@ function CSVManager({ onImport, trades, settings }) {
   const handleDrop = (e) => {
     e.preventDefault()
     setIsDragging(false)
-    
+
     const file = e.dataTransfer.files[0]
     if (file) {
       handleFileSelect(file)
@@ -77,133 +77,110 @@ function CSVManager({ onImport, trades, settings }) {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-semibold text-slate-800 mb-6">Data Management</h2>
-        <p className="text-slate-600 mb-8">Import trades from other platforms or export your data for backup and analysis.</p>
+    <div className="animate-fade-in">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-3 bg-blue-500/10 rounded-xl">
+          <FileText className="w-6 h-6 text-blue-400" />
+        </div>
+        <h2 className="text-2xl font-bold text-white tracking-tight">Data Management</h2>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Export Section */}
-        <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+        <div className="glass-panel rounded-2xl p-6 border border-white/10">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Download className="w-6 h-6 text-green-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-slate-800">Export Data</h3>
+            <Download className="w-5 h-5 text-green-400" />
+            <h3 className="text-lg font-bold text-white">Export Data</h3>
           </div>
-          
-          <p className="text-slate-600 mb-6 text-sm">
-            Download all your trades as a CSV file. This file can be opened in Excel, Google Sheets, or imported back into the Trading Journal.
+          <p className="text-gray-400 mb-6">
+            Download your trading journal data as a CSV file. This includes all your trades,
+            strategies, and settings.
           </p>
-
-          <div className="bg-slate-50 rounded-lg p-4 mb-6">
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-slate-600">Total Trades:</span>
-              <span className="font-medium text-slate-900">{trades.length}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-600">Format:</span>
-              <span className="font-medium text-slate-900">CSV</span>
-            </div>
-          </div>
-
           <button
             onClick={handleExport}
             disabled={trades.length === 0}
-            className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-colors ${
-              trades.length === 0
-                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                : 'bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow'
-            }`}
+            className={`w-full px-4 py-3 btn-primary rounded-xl font-medium flex items-center justify-center gap-2 ${trades.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
           >
-            <Download className="w-4 h-4" />
-            Export All Trades
+            <Download className="w-5 h-5" />
+            Export to CSV
           </button>
         </div>
 
         {/* Import Section */}
-        <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+        <div className="glass-panel rounded-2xl p-6 border border-white/10">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Upload className="w-6 h-6 text-blue-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-slate-800">Import Data</h3>
+            <Upload className="w-5 h-5 text-blue-400" />
+            <h3 className="text-lg font-bold text-white">Import Data</h3>
           </div>
-
-          <p className="text-slate-600 mb-6 text-sm">
-            Upload a CSV file containing your trade history. Make sure your file matches the required format.
+          <p className="text-gray-400 mb-6">
+            Upload a CSV file to restore your trading data.
+            <span className="block mt-2 text-sm text-yellow-400/80">
+              Warning: This will merge with your existing data.
+            </span>
           </p>
 
           <div
+            className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${isDragging
+                ? 'border-blue-500 bg-blue-500/10'
+                : 'border-white/10 hover:border-blue-500/50 hover:bg-blue-500/5'
+              }`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-              isDragging
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-slate-300 bg-slate-50 hover:border-blue-400 hover:bg-blue-50'
-            }`}
           >
             <input
               type="file"
               accept=".csv"
               onChange={handleFileInput}
               className="hidden"
-              id="csv-import-input"
+              id="csv-upload"
               disabled={importing}
             />
-            
             {importing ? (
               <div className="flex flex-col items-center gap-3 py-2">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <p className="text-sm text-slate-600">Importing trades...</p>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <p className="text-sm text-gray-400">Importing trades...</p>
               </div>
             ) : (
               <label
-                htmlFor="csv-import-input"
-                className="cursor-pointer flex flex-col items-center gap-2 py-2"
+                htmlFor="csv-upload"
+                className="cursor-pointer flex flex-col items-center gap-3"
               >
-                <Upload className="w-8 h-8 text-slate-400" />
-                <div>
-                  <p className="text-sm font-medium text-slate-700">
-                    Click to upload
-                  </p>
-                  <p className="text-xs text-slate-500 mt-1">
-                    or drag and drop CSV
-                  </p>
-                </div>
+                <Upload className={`w-8 h-8 ${isDragging ? 'text-blue-400' : 'text-gray-500'}`} />
+                <span className="text-sm font-medium text-gray-300">
+                  {isDragging ? 'Drop file here' : 'Click to upload or drag and drop'}
+                </span>
+                <span className="text-xs text-gray-500">CSV files only</span>
               </label>
             )}
           </div>
 
           {importResult && (
-            <div className={`mt-4 rounded-lg p-3 border ${
-              importResult.success
-                ? 'bg-green-50 border-green-200'
-                : 'bg-red-50 border-red-200'
-            }`}>
+            <div className={`mt-4 rounded-xl p-3 border ${importResult.success
+                ? 'bg-green-500/10 border-green-500/20'
+                : 'bg-red-500/10 border-red-500/20'
+              }`}>
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-2 flex-1">
                   {importResult.success ? (
-                    <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
+                    <CheckCircle className="w-4 h-4 text-green-400 mt-0.5" />
                   ) : (
-                    <AlertCircle className="w-4 h-4 text-red-600 mt-0.5" />
+                    <AlertCircle className="w-4 h-4 text-red-400 mt-0.5" />
                   )}
                   <div className="flex-1">
-                    <h4 className={`text-sm font-semibold ${
-                      importResult.success ? 'text-green-800' : 'text-red-800'
-                    }`}>
+                    <h4 className={`text-sm font-semibold ${importResult.success ? 'text-green-400' : 'text-red-400'
+                      }`}>
                       {importResult.success
                         ? `Imported ${importResult.count} trades`
                         : 'Import failed'}
                     </h4>
                     {importResult.errors && importResult.errors.length > 0 && (
                       <div className="mt-2">
-                        <p className="text-xs font-medium text-yellow-800 mb-1">
+                        <p className="text-xs font-medium text-yellow-400 mb-1">
                           Warnings:
                         </p>
-                        <ul className="text-xs text-yellow-700 space-y-1 max-h-20 overflow-y-auto">
+                        <ul className="text-xs text-yellow-500 space-y-1 max-h-20 overflow-y-auto custom-scrollbar">
                           {importResult.errors.map((error, index) => (
                             <li key={index} className="list-disc list-inside">{error}</li>
                           ))}
@@ -214,7 +191,7 @@ function CSVManager({ onImport, trades, settings }) {
                 </div>
                 <button
                   onClick={clearResult}
-                  className="text-slate-400 hover:text-slate-600"
+                  className="text-gray-400 hover:text-white transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -224,45 +201,69 @@ function CSVManager({ onImport, trades, settings }) {
         </div>
       </div>
 
-      {/* Import Instructions */}
-      <div className="bg-slate-50 border border-slate-200 rounded-lg p-6">
-        <h3 className="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
-          <FileText className="w-5 h-5 text-slate-500" />
-          CSV Format Requirements
-        </h3>
-        <div className="grid md:grid-cols-2 gap-8">
-          <div>
-            <h4 className="text-sm font-medium text-slate-700 mb-2">Required Columns</h4>
-            <ul className="text-sm text-slate-600 space-y-1 list-disc list-inside">
-              <li>Symbol (e.g., AAPL, BTC/USD)</li>
-              <li>Entry Price (number)</li>
-              <li>Exit Price (number)</li>
-              <li>Quantity (number)</li>
-              <li>Entry Date (YYYY-MM-DD)</li>
-              <li>Exit Date (YYYY-MM-DD)</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-sm font-medium text-slate-700 mb-2">Optional Columns</h4>
-            <ul className="text-sm text-slate-600 space-y-1 list-disc list-inside">
-              <li>Type (long/short)</li>
-              <li>Strategy (text)</li>
-              <li>Tags (comma-separated)</li>
-              <li>Conviction (A+, A, B)</li>
-              <li>Notes (text)</li>
-              <li>URLs (semicolon-separated)</li>
-            </ul>
-          </div>
-        </div>
-        
-        <div className="mt-6">
-          <h4 className="text-sm font-medium text-slate-700 mb-2">Sample CSV</h4>
-          <div className="bg-slate-100 rounded border border-slate-200 p-3 overflow-x-auto">
-            <pre className="text-xs text-slate-600 font-mono">
-{`Symbol,Type,Entry Price,Exit Price,Quantity,Entry Date,Exit Date,Strategy,Tags,Conviction,Notes
-AAPL,long,150.00,155.50,10,2024-01-15,2024-01-20,Breakout,tech,A+,Good trade
-BTC/USD,short,45000,44000,0.5,2024-01-10,2024-01-12,Reversal,crypto,A,Quick scalp`}
-            </pre>
+      {/* CSV Format Instructions */}
+      <div className="mt-8 glass-panel rounded-2xl p-6 border border-white/10">
+        <h3 className="text-lg font-bold text-white mb-4">CSV Format Guide</h3>
+        <div className="prose prose-invert max-w-none">
+          <p className="text-gray-400 text-sm mb-4">
+            If you're creating a CSV file manually, please ensure it follows this structure.
+            The header row is required.
+          </p>
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-sm text-left">
+              <thead className="text-xs text-gray-400 uppercase bg-white/5">
+                <tr>
+                  <th className="px-4 py-2 rounded-tl-lg">Column</th>
+                  <th className="px-4 py-2">Required</th>
+                  <th className="px-4 py-2">Format</th>
+                  <th className="px-4 py-2 rounded-tr-lg">Description</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                <tr className="bg-transparent">
+                  <td className="px-4 py-2 font-medium text-white">symbol</td>
+                  <td className="px-4 py-2 text-green-400">Yes</td>
+                  <td className="px-4 py-2 text-gray-400">Text</td>
+                  <td className="px-4 py-2 text-gray-400">Trading pair or stock symbol (e.g., BTC/USD, AAPL)</td>
+                </tr>
+                <tr className="bg-transparent">
+                  <td className="px-4 py-2 font-medium text-white">entryDate</td>
+                  <td className="px-4 py-2 text-green-400">Yes</td>
+                  <td className="px-4 py-2 text-gray-400">YYYY-MM-DD</td>
+                  <td className="px-4 py-2 text-gray-400">Date the trade was opened</td>
+                </tr>
+                <tr className="bg-transparent">
+                  <td className="px-4 py-2 font-medium text-white">type</td>
+                  <td className="px-4 py-2 text-green-400">Yes</td>
+                  <td className="px-4 py-2 text-gray-400">long/short</td>
+                  <td className="px-4 py-2 text-gray-400">Direction of the trade</td>
+                </tr>
+                <tr className="bg-transparent">
+                  <td className="px-4 py-2 font-medium text-white">entryPrice</td>
+                  <td className="px-4 py-2 text-green-400">Yes</td>
+                  <td className="px-4 py-2 text-gray-400">Number</td>
+                  <td className="px-4 py-2 text-gray-400">Price at entry</td>
+                </tr>
+                <tr className="bg-transparent">
+                  <td className="px-4 py-2 font-medium text-white">exitPrice</td>
+                  <td className="px-4 py-2 text-yellow-400">No</td>
+                  <td className="px-4 py-2 text-gray-400">Number</td>
+                  <td className="px-4 py-2 text-gray-400">Price at exit (leave empty if open)</td>
+                </tr>
+                <tr className="bg-transparent">
+                  <td className="px-4 py-2 font-medium text-white">quantity</td>
+                  <td className="px-4 py-2 text-green-400">Yes</td>
+                  <td className="px-4 py-2 text-gray-400">Number</td>
+                  <td className="px-4 py-2 text-gray-400">Size of the position</td>
+                </tr>
+                <tr className="bg-transparent">
+                  <td className="px-4 py-2 font-medium text-white">status</td>
+                  <td className="px-4 py-2 text-green-400">Yes</td>
+                  <td className="px-4 py-2 text-gray-400">WIN/LOSS/OPEN/BE</td>
+                  <td className="px-4 py-2 text-gray-400">Outcome of the trade</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

@@ -70,33 +70,12 @@ function Dashboard({ trades, settings }) {
 
   // --- Render ---
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">Good morning Trader!</h2>
-          <p className="text-sm text-slate-400 mt-1">Here's what's happening with your account today.</p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-50">
-            <DollarSign className="w-4 h-4" />
-          </button>
-          <button className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">
-            <Filter className="w-4 h-4" />
-            Filters
-          </button>
-          <button className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50">
-            <CalendarIcon className="w-4 h-4" />
-            Date range
-          </button>
-          <button className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-50">
-            <Bell className="w-4 h-4" />
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 shadow-sm shadow-indigo-200">
-            <Plus className="w-4 h-4" />
-            Import Trades
-          </button>
+          <h2 className="text-2xl font-bold text-white tracking-tight">Good morning Trader!</h2>
+          <p className="text-sm text-gray-400 mt-1">Here's what's happening with your account today.</p>
         </div>
       </div>
 
@@ -107,8 +86,8 @@ function Dashboard({ trades, settings }) {
           value={formatCurrency(totalPnL)}
           type="simple"
           data={{
-            icon: <DollarSign className="w-4 h-4 text-slate-500" />,
-            subColor: 'text-slate-400'
+            icon: <DollarSign className="w-4 h-4 text-blue-400" />,
+            subColor: 'text-gray-400'
           }}
           subLabel="12 trades"
           subValue=""
@@ -118,8 +97,8 @@ function Dashboard({ trades, settings }) {
           value={formatCurrency(expectancy)}
           type="simple"
           data={{
-            icon: <Target className="w-4 h-4 text-slate-500" />,
-            subColor: 'text-slate-400'
+            icon: <Target className="w-4 h-4 text-purple-400" />,
+            subColor: 'text-gray-400'
           }}
         />
         <StatCard
@@ -173,7 +152,7 @@ function Dashboard({ trades, settings }) {
         </div>
 
         {/* Calendar View */}
-        <div className="h-full overflow-hidden rounded-xl border border-slate-100 shadow-sm">
+        <div className="h-full overflow-hidden rounded-2xl glass-panel">
           <CalendarView trades={trades} settings={settings} />
         </div>
       </div>

@@ -117,56 +117,56 @@ function Statistics({ trades, settings }) {
       label: 'Total P/L',
       value: formatCurrency(totalPnL),
       icon: DollarSign,
-      color: totalPnL >= 0 ? 'text-green-600' : 'text-red-600',
-      bgColor: totalPnL >= 0 ? 'bg-green-50' : 'bg-red-50',
+      color: totalPnL >= 0 ? 'text-green-400' : 'text-red-400',
+      bgColor: totalPnL >= 0 ? 'bg-green-500/10 border-green-500/20' : 'bg-red-500/10 border-red-500/20',
     },
     {
       label: 'Total Trades',
       value: trades.length,
       icon: Target,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
+      color: 'text-blue-400',
+      bgColor: 'bg-blue-500/10 border-blue-500/20',
     },
     {
       label: 'Win Rate',
       value: `${winRate.toFixed(1)}%`,
       icon: TrendingUp,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
+      color: 'text-green-400',
+      bgColor: 'bg-green-500/10 border-green-500/20',
     },
     {
       label: 'Profit Factor',
       value: profitFactor === Infinity ? '∞' : profitFactor.toFixed(2),
       icon: TrendingDown,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
+      color: 'text-purple-400',
+      bgColor: 'bg-purple-500/10 border-purple-500/20',
     },
     {
       label: 'ROI',
       value: `${roi}%`,
       icon: BarChart2,
-      color: totalPnL >= 0 ? 'text-green-600' : 'text-red-600',
-      bgColor: totalPnL >= 0 ? 'bg-green-50' : 'bg-red-50',
+      color: totalPnL >= 0 ? 'text-green-400' : 'text-red-400',
+      bgColor: totalPnL >= 0 ? 'bg-green-500/10 border-green-500/20' : 'bg-red-500/10 border-red-500/20',
     },
     {
       label: 'Max Drawdown',
       value: formatCurrency(maxDrawdown),
       icon: TrendingDown,
-      color: 'text-red-600',
-      bgColor: 'bg-red-50',
+      color: 'text-red-400',
+      bgColor: 'bg-red-500/10 border-red-500/20',
     },
     {
       label: 'Avg Duration',
       value: `${avgDuration} days`,
       icon: Clock,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
+      color: 'text-blue-400',
+      bgColor: 'bg-blue-500/10 border-blue-500/20',
     },
   ]
 
   return (
-    <div>
-      <h2 className="text-2xl font-semibold text-slate-800 mb-6">Statistics</h2>
+    <div className="animate-fade-in">
+      <h2 className="text-2xl font-bold text-white mb-6">Statistics</h2>
 
       {/* Main Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-8">
@@ -175,11 +175,11 @@ function Statistics({ trades, settings }) {
           return (
             <div
               key={index}
-              className={`${stat.bgColor} rounded-lg p-6 border border-slate-200`}
+              className={`${stat.bgColor} rounded-2xl p-6 border backdrop-blur-sm transition-transform hover:scale-105`}
             >
               <div className="flex items-center justify-between mb-2">
                 <Icon className={`w-6 h-6 ${stat.color}`} />
-                <span className="text-sm font-medium text-slate-600">{stat.label}</span>
+                <span className="text-sm font-medium text-gray-400">{stat.label}</span>
               </div>
               <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
             </div>
@@ -189,50 +189,50 @@ function Statistics({ trades, settings }) {
 
       {/* Detailed Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        <div className="bg-slate-50 rounded-lg p-6 border border-slate-200">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Trade Breakdown</h3>
+        <div className="glass-panel rounded-2xl p-6 border border-white/10">
+          <h3 className="text-lg font-bold text-white mb-4">Trade Breakdown</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-slate-600">Winning Trades</span>
-              <span className="font-semibold text-green-600">{winningTrades.length}</span>
+              <span className="text-gray-400">Winning Trades</span>
+              <span className="font-semibold text-green-400">{winningTrades.length}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-600">Losing Trades</span>
-              <span className="font-semibold text-red-600">{losingTrades.length}</span>
+              <span className="text-gray-400">Losing Trades</span>
+              <span className="font-semibold text-red-400">{losingTrades.length}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-600">Average Win</span>
-              <span className="font-semibold text-green-600">{formatCurrency(avgWin)}</span>
+              <span className="text-gray-400">Average Win</span>
+              <span className="font-semibold text-green-400">{formatCurrency(avgWin)}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-600">Average Loss</span>
-              <span className="font-semibold text-red-600">{formatCurrency(avgLoss)}</span>
+              <span className="text-gray-400">Average Loss</span>
+              <span className="font-semibold text-red-400">{formatCurrency(avgLoss)}</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-50 rounded-lg p-6 border border-slate-200">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Performance Metrics</h3>
+        <div className="glass-panel rounded-2xl p-6 border border-white/10">
+          <h3 className="text-lg font-bold text-white mb-4">Performance Metrics</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-slate-600">Total Winning P/L</span>
-              <span className="font-semibold text-green-600">{formatCurrency(totalWins)}</span>
+              <span className="text-gray-400">Total Winning P/L</span>
+              <span className="font-semibold text-green-400">{formatCurrency(totalWins)}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-600">Total Losing P/L</span>
-              <span className="font-semibold text-red-600">{formatCurrency(totalLosses)}</span>
+              <span className="text-gray-400">Total Losing P/L</span>
+              <span className="font-semibold text-red-400">{formatCurrency(totalLosses)}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-600">Best Trade</span>
-              <span className="font-semibold text-green-600">
+              <span className="text-gray-400">Best Trade</span>
+              <span className="font-semibold text-green-400">
                 {trades.length > 0
                   ? formatCurrency(Math.max(...trades.map((t) => t.pnl || 0)))
                   : formatCurrency(0)}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-600">Worst Trade</span>
-              <span className="font-semibold text-red-600">
+              <span className="text-gray-400">Worst Trade</span>
+              <span className="font-semibold text-red-400">
                 {trades.length > 0
                   ? formatCurrency(Math.min(...trades.map((t) => t.pnl || 0)))
                   : formatCurrency(0)}
@@ -241,26 +241,26 @@ function Statistics({ trades, settings }) {
           </div>
         </div>
 
-        <div className="bg-slate-50 rounded-lg p-6 border border-slate-200">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Advanced Metrics</h3>
+        <div className="glass-panel rounded-2xl p-6 border border-white/10">
+          <h3 className="text-lg font-bold text-white mb-4">Advanced Metrics</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-slate-600">Expectancy</span>
-              <span className={`font-semibold ${expectancy >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <span className="text-gray-400">Expectancy</span>
+              <span className={`font-semibold ${expectancy >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                 {formatCurrency(expectancy)}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-600">Risk-Reward Ratio</span>
-              <span className="font-semibold text-slate-800">{riskRewardRatio}</span>
+              <span className="text-gray-400">Risk-Reward Ratio</span>
+              <span className="font-semibold text-white">{riskRewardRatio}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-600">Max Drawdown %</span>
-              <span className="font-semibold text-red-600">{maxDrawdownPercent.toFixed(2)}%</span>
+              <span className="text-gray-400">Max Drawdown %</span>
+              <span className="font-semibold text-red-400">{maxDrawdownPercent.toFixed(2)}%</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-600">Starting Capital</span>
-              <span className="font-semibold text-slate-800">{formatCurrency(startingCapital)}</span>
+              <span className="text-gray-400">Starting Capital</span>
+              <span className="font-semibold text-white">{formatCurrency(startingCapital)}</span>
             </div>
           </div>
         </div>
@@ -268,30 +268,30 @@ function Statistics({ trades, settings }) {
 
       {/* Mistake Analysis */}
       {sortedMistakes.length > 0 && (
-        <div className="bg-slate-50 rounded-lg p-6 border border-slate-200 mb-6">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-orange-500" />
+        <div className="glass-panel rounded-2xl p-6 border border-white/10 mb-6">
+          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-orange-400" />
             Mistake Analysis
           </h3>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto custom-scrollbar">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-200">
-                  <th className="text-left py-2 px-4 font-semibold text-slate-700">Mistake</th>
-                  <th className="text-right py-2 px-4 font-semibold text-slate-700">Frequency</th>
-                  <th className="text-right py-2 px-4 font-semibold text-slate-700">Total Cost</th>
-                  <th className="text-right py-2 px-4 font-semibold text-slate-700">Avg Cost / Trade</th>
+                <tr className="border-b border-white/10">
+                  <th className="text-left py-2 px-4 font-semibold text-gray-400">Mistake</th>
+                  <th className="text-right py-2 px-4 font-semibold text-gray-400">Frequency</th>
+                  <th className="text-right py-2 px-4 font-semibold text-gray-400">Total Cost</th>
+                  <th className="text-right py-2 px-4 font-semibold text-gray-400">Avg Cost / Trade</th>
                 </tr>
               </thead>
               <tbody>
                 {sortedMistakes.map(([mistake, stats]) => (
-                  <tr key={mistake} className="border-b border-slate-100">
-                    <td className="py-2 px-4 font-medium text-slate-800">{mistake}</td>
-                    <td className="py-2 px-4 text-right text-slate-600">{stats.count}</td>
-                    <td className="py-2 px-4 text-right font-medium text-red-600">
+                  <tr key={mistake} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                    <td className="py-2 px-4 font-medium text-white">{mistake}</td>
+                    <td className="py-2 px-4 text-right text-gray-400">{stats.count}</td>
+                    <td className="py-2 px-4 text-right font-medium text-red-400">
                       {formatCurrency(stats.pnl)}
                     </td>
-                    <td className="py-2 px-4 text-right text-slate-600">
+                    <td className="py-2 px-4 text-right text-gray-400">
                       {formatCurrency(stats.pnl / stats.count)}
                     </td>
                   </tr>

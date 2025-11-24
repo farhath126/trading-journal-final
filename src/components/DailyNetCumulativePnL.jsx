@@ -43,7 +43,7 @@ function DailyNetCumulativePnL({ data = [] }) {
                         y1={zeroY}
                         x2={width - padding}
                         y2={zeroY}
-                        stroke="#e2e8f0"
+                        stroke="#374151"
                         strokeWidth="1"
                         strokeDasharray="4 4"
                     />
@@ -81,7 +81,7 @@ function DailyNetCumulativePnL({ data = [] }) {
                                 cy={y}
                                 r="3"
                                 fill="#10b981"
-                                stroke="white"
+                                stroke="#030712"
                                 strokeWidth="1.5"
                             >
                                 <title>{`${d.date}: $${d.cumulativePnl}`}</title>
@@ -94,24 +94,24 @@ function DailyNetCumulativePnL({ data = [] }) {
     }
 
     return (
-        <div className="bg-white rounded-xl p-6 border border-slate-100 shadow-sm h-full">
+        <div className="glass-panel rounded-2xl p-6 h-full">
             <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+                <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-300">
                     Daily Net Cumulative P&L
-                    <Info className="w-4 h-4 text-slate-300" />
+                    <Info className="w-4 h-4 text-gray-500 hover:text-gray-300 transition-colors cursor-help" />
                 </div>
             </div>
 
             {data.length > 0 ? (
                 renderAreaChart()
             ) : (
-                <div className="h-48 flex items-center justify-center text-slate-400 text-sm">
+                <div className="h-48 flex items-center justify-center text-gray-500 text-sm">
                     No data available
                 </div>
             )}
 
             {/* X-Axis Labels */}
-            <div className="flex justify-between text-[10px] text-slate-400 mt-2 px-2">
+            <div className="flex justify-between text-[10px] text-gray-500 mt-2 px-2">
                 {data.length > 0 && (
                     <>
                         <span>{data[0]?.date}</span>
