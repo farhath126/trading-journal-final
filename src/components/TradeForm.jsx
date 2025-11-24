@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Save, X, Image as ImageIcon, Link as LinkIcon, Upload, Tag, TrendingUp, AlertTriangle } from 'lucide-react'
 import { getStrategies } from '../utils/storage'
+import TradeChart from './TradeChart'
+import ErrorBoundary from './ErrorBoundary'
 
 const COMMON_MISTAKES = [
   'FOMO',
@@ -427,8 +429,8 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
                 type="button"
                 onClick={() => handleMistakeToggle(mistake)}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors border ${formData.mistakes.includes(mistake)
-                    ? 'bg-red-100 text-red-700 border-red-200'
-                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                  ? 'bg-red-100 text-red-700 border-red-200'
+                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                   }`}
               >
                 {mistake}
@@ -560,6 +562,23 @@ function TradeForm({ onAddTrade, editTrade, onCancelEdit, plannedTrade }) {
           )}
         </div>
       </form>
+
+      {/* Chart Section */}
+      {formData.symbol && (
+        <div className="mt-8 pt-8 border-t border-slate-200">
+          <h3 className="text-lg font-semibold text-slate-800 mb-4">Chart Analysis</h3>
+          <div className="h-[500px] w-full bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <ErrorBoundary>
+              <TradeChart
+                symbol={formData.symbol}
+                entryPrice={formData.entryPrice}
+                exitPrice={formData.exitPrice}
+                type={formData.type}
+              />
+            </ErrorBoundary>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
