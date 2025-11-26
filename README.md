@@ -6,6 +6,14 @@ A modern, feature-rich trading journal application built with React and Vite. Tr
 
 ## ✨ Features
 
+### 🔐 Authentication & Cloud Sync
+Securely sign in with Email or Google to access your data from any device.
+- **Secure Login**: Powered by Firebase Authentication
+- **Cloud Sync**: Real-time data synchronization across devices
+- **Data Migration**: Seamlessly move your local data to the cloud
+
+![Login Screen](./src/assets/screenshots/login-page.png)
+
 ### 📊 Dashboard
 Get a comprehensive overview of your trading performance at a glance with key metrics, charts, and recent activity.
 

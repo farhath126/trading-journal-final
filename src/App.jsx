@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { TrendingUp, Plus, BarChart3, List, LayoutDashboard, Settings, Target, FileUp, Calendar, Menu, X, ChevronRight } from 'lucide-react'
+import { TrendingUp, Plus, BarChart3, List, LayoutDashboard, Settings, Target, FileUp, Calendar, Menu, X, ChevronRight, LogOut } from 'lucide-react'
 import TradeForm from './components/TradeForm'
 import TradeList from './components/TradeList'
 import Statistics from './components/Statistics'
@@ -8,9 +8,21 @@ import SettingsComponent from './components/Settings'
 import StrategyManager from './components/StrategyManager'
 import CSVManager from './components/CSVManager'
 import TradePlanner from './components/TradePlanner'
-import { getTrades, saveTrades, getSettings, getStrategies } from './utils/storage'
+import Login from './components/Auth/Login'
+import Signup from './components/Auth/Signup'
+import { AuthProvider, useAuth } from './context/AuthContext'
+import {
+  getUserTrades,
+  saveUserTrade,
+  deleteUserTrade,
+  getUserSettings,
+  saveUserSettings,
+  getUserStrategies,
+  saveUserStrategies
+} from './services/firestore'
 
-function App() {
+function AuthenticatedApp() {
+  const { currentUser, logout } = useAuth()
   const [trades, setTrades] = useState([])
   const [settings, setSettings] = useState({ currency: 'USD', startingCapital: 10000 })
   const [strategies, setStrategies] = useState([])
@@ -18,42 +30,54 @@ function App() {
   const [editingTrade, setEditingTrade] = useState(null)
   const [plannedTrade, setPlannedTrade] = useState(null)
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const [loadingData, setLoadingData] = useState(true)
 
   useEffect(() => {
-    const savedTrades = getTrades()
-    setTrades(savedTrades)
-    const savedSettings = getSettings()
-    setSettings(savedSettings)
-    const savedStrategies = getStrategies()
-    setStrategies(savedStrategies)
-  }, [])
+    async function loadData() {
+      if (currentUser) {
+        try {
+          const [loadedTrades, loadedSettings, loadedStrategies] = await Promise.all([
+            getUserTrades(currentUser.uid),
+            getUserSettings(currentUser.uid),
+            getUserStrategies(currentUser.uid)
+          ])
 
-  const handleAddTrade = (trade, isEdit = false) => {
-    if (isEdit) {
-      // Update existing trade
-      const updatedTrades = trades.map(t =>
-        t.id === trade.id ? trade : t
-      )
-      setTrades(updatedTrades)
-      saveTrades(updatedTrades)
-      setEditingTrade(null)
-      setActiveTab('list') // Switch to list view after editing
-    } else {
-      // Add new trade
-      const newTrade = {
-        ...trade,
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString(),
+          setTrades(loadedTrades)
+          if (loadedSettings) setSettings(loadedSettings)
+          if (loadedStrategies.length > 0) setStrategies(loadedStrategies)
+        } catch (error) {
+          console.error("Failed to load user data", error)
+        } finally {
+          setLoadingData(false)
+        }
       }
-      const updatedTrades = [newTrade, ...trades]
-      setTrades(updatedTrades)
-      saveTrades(updatedTrades)
     }
+    loadData()
+  }, [currentUser])
+
+  const handleAddTrade = async (trade, isEdit = false) => {
+    const newTrade = isEdit ? trade : {
+      ...trade,
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString(),
+    }
+
+    // Optimistic update
+    if (isEdit) {
+      setTrades(trades.map(t => t.id === newTrade.id ? newTrade : t))
+      setEditingTrade(null)
+      setActiveTab('list')
+    } else {
+      setTrades([newTrade, ...trades])
+    }
+
+    // Save to Firestore
+    await saveUserTrade(currentUser.uid, newTrade)
   }
 
   const handleEditTrade = (trade) => {
     setEditingTrade(trade)
-    setActiveTab('add') // Switch to add/edit tab
+    setActiveTab('add')
   }
 
   const handleCancelEdit = () => {
@@ -67,12 +91,9 @@ function App() {
     setActiveTab('add')
   }
 
-  const handleImportTrades = (importedTrades) => {
-    // Merge imported trades with existing trades
-    // Check for duplicates by ID, or add new IDs if needed
+  const handleImportTrades = async (importedTrades) => {
     const existingIds = new Set(trades.map(t => t.id))
     const newTrades = importedTrades.map(trade => {
-      // If trade has an ID that already exists, generate a new one
       if (existingIds.has(trade.id)) {
         trade.id = Date.now().toString() + '_' + Math.random().toString(36).substr(2, 9)
       }
@@ -81,31 +102,40 @@ function App() {
 
     const updatedTrades = [...newTrades, ...trades]
     setTrades(updatedTrades)
-    saveTrades(updatedTrades)
+
+    // Save all new trades to Firestore
+    // Note: In production, use batch writes or sequential saves
+    for (const trade of newTrades) {
+      await saveUserTrade(currentUser.uid, trade)
+    }
   }
 
-  const handleDeleteTrade = (id) => {
-    const updatedTrades = trades.filter(trade => trade.id !== id)
-    setTrades(updatedTrades)
-    saveTrades(updatedTrades)
+  const handleDeleteTrade = async (id) => {
+    setTrades(trades.filter(trade => trade.id !== id))
+    await deleteUserTrade(currentUser.uid, id)
   }
 
-  const handleDeleteAllTrades = () => {
+  const handleDeleteAllTrades = async () => {
+    // Caution: Deleting all trades one by one might be slow
+    const oldTrades = [...trades]
     setTrades([])
-    saveTrades([])
+    for (const trade of oldTrades) {
+      await deleteUserTrade(currentUser.uid, trade.id)
+    }
   }
 
-  const handleSettingsChange = (newSettings) => {
+  const handleSettingsChange = async (newSettings) => {
     setSettings(newSettings)
+    await saveUserSettings(currentUser.uid, newSettings)
   }
 
   const handleCapitalChange = () => {
-    // Force re-render of components that use capital adjustments
-    // This is handled by the components reading from storage directly
+    // Handled by components or refresh
   }
 
-  const handleStrategyChange = (newStrategies) => {
+  const handleStrategyChange = async (newStrategies) => {
     setStrategies(newStrategies)
+    await saveUserStrategies(currentUser.uid, newStrategies)
   }
 
   const NavItem = ({ id, icon: Icon, label, onClick }) => (
@@ -128,6 +158,14 @@ function App() {
       {activeTab === id && <ChevronRight className="w-4 h-4 ml-auto opacity-50 relative z-10" />}
     </button>
   )
+
+  if (loadingData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] text-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex text-gray-100 font-sans selection:bg-blue-500/30">
@@ -190,11 +228,13 @@ function App() {
         <div className="p-4 border-t border-white/5 bg-black/20">
           <div className={`flex items-center gap-3 ${!isSidebarOpen && 'md:justify-center'}`}>
             <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-700 to-gray-600 flex items-center justify-center text-white font-medium text-sm ring-2 ring-white/10">
-              TJ
+              {currentUser.email ? currentUser.email[0].toUpperCase() : 'T'}
             </div>
             <div className={`overflow-hidden transition-all duration-300 ${isSidebarOpen ? 'w-auto opacity-100' : 'w-0 opacity-0 md:hidden'}`}>
-              <p className="text-sm font-medium text-white">Trader</p>
-              <p className="text-xs text-blue-400">Pro Plan</p>
+              <p className="text-sm font-medium text-white truncate w-32">{currentUser.email}</p>
+              <button onClick={logout} className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                <LogOut className="w-3 h-3" /> Sign Out
+              </button>
             </div>
           </div>
         </div>
@@ -273,9 +313,37 @@ function App() {
   )
 }
 
+function App() {
+  const [isLogin, setIsLogin] = useState(true)
+  const { currentUser } = useAuth()
+
+  if (currentUser) {
+    return <AuthenticatedApp />
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#0a0a0a] to-[#0a0a0a]">
+      {isLogin ? (
+        <Login onToggleMode={() => setIsLogin(false)} />
+      ) : (
+        <Signup onToggleMode={() => setIsLogin(true)} />
+      )}
+    </div>
+  )
+}
+
+function AppWrapper() {
+  return (
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  )
+}
+
 // Helper for BarChart2 since it was renamed in import but used as Icon
 const BarChart2 = ({ className }) => (
   <BarChart3 className={className} />
 )
 
-export default App
+export default AppWrapper
+
