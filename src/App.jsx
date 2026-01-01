@@ -312,6 +312,7 @@ function AuthenticatedApp() {
             )}
             {activeTab === 'settings' && (
               <SettingsComponent
+                settings={settings}
                 onSettingsChange={handleSettingsChange}
                 onCapitalChange={handleCapitalChange}
               />

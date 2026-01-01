@@ -19,9 +19,9 @@ const CURRENCIES = [
   { code: 'ETH', symbol: 'Ξ', name: 'Ethereum' },
 ]
 
-function Settings({ onSettingsChange, onCapitalChange }) {
+function Settings({ settings: initialSettings, onSettingsChange, onCapitalChange }) {
   const { currentUser, logout } = useAuth()
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState(initialSettings || {
     currency: 'USD',
     startingCapital: 10000,
   })
@@ -29,9 +29,10 @@ function Settings({ onSettingsChange, onCapitalChange }) {
   const [isSyncing, setIsSyncing] = useState(false)
 
   useEffect(() => {
-    const savedSettings = getSettings()
-    setSettings(savedSettings)
-  }, [])
+    if (initialSettings) {
+      setSettings(initialSettings)
+    }
+  }, [initialSettings])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -43,7 +44,6 @@ function Settings({ onSettingsChange, onCapitalChange }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    saveSettings(settings)
     if (onSettingsChange) {
       onSettingsChange(settings)
     }
