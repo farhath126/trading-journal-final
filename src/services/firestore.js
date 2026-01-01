@@ -17,7 +17,7 @@ export const getUserTrades = async (userId) => {
         return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
     } catch (error) {
         console.error('Error fetching trades:', error);
-        return [];
+        throw error;
     }
 };
 
@@ -27,6 +27,7 @@ export const saveUserTrade = async (userId, trade) => {
         await setDoc(tradeRef, trade);
     } catch (error) {
         console.error('Error saving trade:', error);
+        throw error;
     }
 };
 
@@ -49,7 +50,7 @@ export const getUserSettings = async (userId) => {
         return null;
     } catch (error) {
         console.error('Error fetching settings:', error);
-        return null;
+        throw error;
     }
 };
 
@@ -59,6 +60,7 @@ export const saveUserSettings = async (userId, settings) => {
         await setDoc(settingsRef, settings);
     } catch (error) {
         console.error('Error saving settings:', error);
+        throw error;
     }
 };
 
@@ -72,7 +74,7 @@ export const getUserStrategies = async (userId) => {
         return [];
     } catch (error) {
         console.error('Error fetching strategies:', error);
-        return [];
+        throw error;
     }
 };
 
@@ -82,6 +84,7 @@ export const saveUserStrategies = async (userId, strategies) => {
         await setDoc(strategiesRef, { list: strategies });
     } catch (error) {
         console.error('Error saving strategies:', error);
+        throw error;
     }
 };
 

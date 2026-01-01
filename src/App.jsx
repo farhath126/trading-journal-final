@@ -47,6 +47,11 @@ function AuthenticatedApp() {
           if (loadedStrategies.length > 0) setStrategies(loadedStrategies)
         } catch (error) {
           console.error("Failed to load user data", error)
+          if (error.code === 'permission-denied') {
+            alert("Database Permission Error: Please ensure your Firestore Security Rules are configured correctly. Check firestore.rules in the project root.")
+          } else {
+            alert(`Failed to load data: ${error.message}`)
+          }
         } finally {
           setLoadingData(false)
         }
@@ -105,8 +110,13 @@ function AuthenticatedApp() {
 
     // Save all new trades to Firestore
     // Note: In production, use batch writes or sequential saves
-    for (const trade of newTrades) {
-      await saveUserTrade(currentUser.uid, trade)
+    try {
+      for (const trade of newTrades) {
+        await saveUserTrade(currentUser.uid, trade)
+      }
+    } catch (error) {
+      console.error("Failed to save imported trades", error)
+      alert("Warning: Failed to save imported trades to the cloud. They are visible locally but will be lost on refresh. Check permissions.")
     }
   }
 
